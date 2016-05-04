@@ -1,0 +1,27 @@
+{% extends "base.jinja2" %}
+
+{% block jumbotron %}
+<h1>Share records from... ?</h1>
+<p></p>
+{% endblock %}
+
+{% block body %}
+<!-- Example row of columns -->
+<div class="row">
+    <form role="form">
+        <div class="form-group">
+            <label for="email">State</label>
+            <input type="text" class="form-control" id="email" value="Massachusetts">
+        </div>
+        <div class="form-group">
+            <label for="pwd">City</label>
+            <input type="text" class="form-control" id="pwd" value="Boston">
+        </div>
+        <div class="form-group">
+            <label for="pwd">Your doctor's name</label>
+            <input type="text" class="form-control" id="pwd" value="Timothy Garrick">
+        </div>
+        <a href="/consent" class="btn btn-default">Find my doctor</a>
+    </form>
+</div>
+{% endblock %}

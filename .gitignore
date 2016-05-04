@@ -1,0 +1,5 @@
+ENV
+*.pyc
+.DS_Store
+*.egg-info
+node_modules

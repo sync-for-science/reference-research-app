@@ -1,0 +1,16 @@
+{% extends "base.jinja2" %}
+
+{% block jumbotron %}
+<h1>Found Dr. Garrick</h1>
+{% endblock %}
+
+{% block body %}
+<div>
+    <a class="btn btn-primary btn-lg" target="_blank" href="https://authorize-dstu2.smarthealthit.org/authorize?client_id=ea634063-9fea-423a-be35-efc96bf586df&response_type=code&scope=patient/*.read+openid+profile&redirect_uri=http%3A%2F%2Flocalhost%3A8000%2Ffhir-app%2F&state=123&aud=https%3A%2F%2Ffhir-api-dstu2.smarthealthit.org" role="button" style="">Share
+        my electronic health records »</a>
+    <h2>What does this mean?</h2>
+    <p>[consent language here]</p>
+    <br>
+    <a href="/connected" style="font-size: .5em;">__next__</a>
+</div>
+{% endblock %}
