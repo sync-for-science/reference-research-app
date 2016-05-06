@@ -1,5 +1,6 @@
 """ FHIR service """
 import requests
+from researchapp.services.logging import log
 
 
 FHIR_URL = 'http://52.39.26.206:9000/api/fhir'
@@ -15,4 +16,7 @@ def get_patient(token):
         'Accept': 'application/json',
     }
 
-    return requests.get(url, headers=headers).json()
+    response = requests.get(url, headers=headers)
+    log(response)
+
+    return response.json()
