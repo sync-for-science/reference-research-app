@@ -6,7 +6,7 @@
 
 {% block body %}
 <div>
-    <form action="http://52.39.26.206:9000/authorize/" id="authorize-form">
+    <form action="{{ provider.authorize_url }}" id="authorize-form">
         <input type="hidden" name="client_id" value="app-demo" />
         <input type="hidden" name="response_type" value="code" />
         <input type="hidden" name="scope" value="patient/*.read offline_access" />
