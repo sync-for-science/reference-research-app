@@ -3,10 +3,10 @@ import os
 from setuptools import setup, find_packages
 
 here = os.path.abspath(os.path.dirname(__file__))
-README = open(os.path.join(here, 'README.txt')).read()
+README = open(os.path.join(here, 'README.md')).read()
 CHANGES = open(os.path.join(here, 'CHANGES.txt')).read()
 
-requires=['pyramid>=1.4', 'pyramid_jinja2', 'jinja2','sqlalchemy','waitress','pyramid_tm','pyramid_debugtoolbar','zope.sqlalchemy']
+requires=['pyramid>=1.4', 'pyramid_jinja2', 'jinja2','sqlalchemy', 'mysqlclient', 'waitress','pyramid_tm','pyramid_debugtoolbar','zope.sqlalchemy']
 
 setup(name='ResearchApp',
       version='0.0',
