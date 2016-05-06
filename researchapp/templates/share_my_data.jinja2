@@ -8,20 +8,16 @@
 {% block body %}
 <!-- Example row of columns -->
 <div class="row">
-    <form role="form">
+    <form class="form-inline" action="/consent" method="get">
         <div class="form-group">
-            <label for="email">State</label>
-            <input type="text" class="form-control" id="email" value="Massachusetts">
+            <label for="doctor">Your doctor's name</label>
+            <select class="form-control" name="doctor" id="doctor">
+                {% for provider in providers %}
+                <option>{{ provider.name }}</option>
+                {% endfor %}
+            </select>
         </div>
-        <div class="form-group">
-            <label for="pwd">City</label>
-            <input type="text" class="form-control" id="pwd" value="Boston">
-        </div>
-        <div class="form-group">
-            <label for="pwd">Your doctor's name</label>
-            <input type="text" class="form-control" id="pwd" value="Timothy Garrick">
-        </div>
-        <a href="/consent" class="btn btn-default">Find my doctor</a>
+        <button class="btn btn-default" type="submit">Find my doctor</button>
     </form>
 </div>
 {% endblock %}

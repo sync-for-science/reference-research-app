@@ -6,8 +6,17 @@
 
 {% block body %}
 <div>
-    <a class="btn btn-primary btn-lg" target="_blank" href="https://authorize-dstu2.smarthealthit.org/authorize?client_id=ea634063-9fea-423a-be35-efc96bf586df&response_type=code&scope=patient/*.read+openid+profile&redirect_uri=http%3A%2F%2Flocalhost%3A8000%2Ffhir-app%2F&state=123&aud=https%3A%2F%2Ffhir-api-dstu2.smarthealthit.org" role="button" style="">Share
-        my electronic health records »</a>
+    <form action="http://52.39.26.206:9000/authorize/" id="authorize-form">
+        <input type="hidden" name="client_id" value="{{ oauth_config.client_id }}" />
+        <input type="hidden" name="response_type" value="code" />
+        <input type="hidden" name="scope" value="patient/*.read offline_access" />
+        <input type="hidden" name="redirect_uri" value="http://52.39.26.206:6543/authorized" />
+        <input type="hidden" name="state" value="123" />
+        <input type="hidden" name="aud" value="http://52.39.26.206:9000/api/fhir" />
+
+        <button type="submit" class="btn btn-primary btn-lg">Share my electronic health records &raquo;</button>
+    </form>
+
     <h2>What does this mean?</h2>
     <p>[consent language here]</p>
     <br>
