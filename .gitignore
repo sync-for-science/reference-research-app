@@ -4,6 +4,5 @@ ENV
 *.egg-info
 node_modules
 development.ini
-
-# Temporarily ignored "databases"
-patients.json
+*.sqlite3
+data

@@ -2,10 +2,7 @@
 import requests
 
 
-TOKEN_URL = 'http://52.39.26.206:9000/api/oauth/token'
-
-
-def code_to_token(code):
+def code_to_token(code, provider):
     """ hi """
     post_data = {
         'grant_type': 'authorization_code',
@@ -14,7 +11,7 @@ def code_to_token(code):
     }
     client_auth = requests.auth.HTTPBasicAuth('app-demo',
                                               'demo-secret-s4s')
-    response = requests.post(TOKEN_URL,
+    response = requests.post(provider['oauth_url'] + '/token',
                              auth=client_auth,
                              data=post_data)
 
@@ -25,7 +22,7 @@ def code_to_token(code):
         return {}
 
 
-def refresh(token):
+def refresh(token, provider):
     """ hi """
     post_data = {
         'grant_type': 'refresh_token',
@@ -35,7 +32,7 @@ def refresh(token):
     client_auth = requests.auth.HTTPBasicAuth('app-demo',
                                               'demo-secret-s4s')
 
-    response = requests.post(TOKEN_URL,
+    response = requests.post(provider['oauth_url'] + '/token',
                              auth=client_auth,
                              data=post_data)
 

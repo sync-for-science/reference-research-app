@@ -32,14 +32,6 @@ class FileService(object):
 
         return next(iter(providers))
 
-    def oauth_for_provider(self, provider):  # pylint: disable=unused-argument
-        """ Returns an OAuth config blob for a provider. """
-
-        return {
-            'client_id': 'app-demo',
-            'url': 'http://52.39.26.206:9000/api/oauth/',
-        }
-
     def _load_providers(self):
         import json
 

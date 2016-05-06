@@ -1,16 +1,17 @@
 """ FHIR service """
 import requests
 from researchapp.services.logging import log
+from researchapp.services import oauth
 
 
-FHIR_URL = 'http://52.39.26.206:9000/api/fhir'
+def get_patient(participant, provider):
+    """ Gets a Patient resource """
+    token = participant.authorization().refresh_token
+    auth = oauth.refresh(token, provider)
 
-
-def get_patient(token):
-    """ gets a patient """
-    url = '{url}/Patient/{patient}'.format(url=FHIR_URL,
-                                           patient=token['patient'])
-    authorization = '{token_type} {access_token}'.format(**token)
+    url = '{url}/Patient/{patient}'.format(url=provider['fhir_url'],
+                                           patient=auth['patient'])
+    authorization = '{token_type} {access_token}'.format(**auth)
     headers = {
         'Authorization': authorization,
         'Accept': 'application/json',

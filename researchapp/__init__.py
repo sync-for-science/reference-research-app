@@ -18,7 +18,8 @@ def main(global_config, **settings):  # pylint: disable=unused-argument
     # Binding engine to the model
     initialize_sql(db_engine)
 
-    config = Configurator(settings=settings)
+    config = Configurator(settings=settings,
+                          root_factory='researchapp.models.Root')
 
     config.include('pyramid_jinja2')
     config.include('researchapp.services.logging')
