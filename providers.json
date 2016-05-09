@@ -3,8 +3,6 @@
         "name": "Timothy Garrick",
         "city": "Boston",
         "state": "Massachusetts",
-        "fhir_url": "http://52.39.26.206:9000/api/fhir",
-        "oauth_url": "http://52.39.26.206:9000/api/oauth",
-        "authorize_url": "http://52.39.26.206:9000/authorize/"
+        "fhir_url": "http://52.39.26.206:9000/api/fhir"
     }
 ]

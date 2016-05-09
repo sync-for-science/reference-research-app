@@ -28,11 +28,15 @@ def view_share_my_data(request):
 @view_config(route_name='consent', renderer='templates/consent.jinja2')
 def view_consent(request):
     from researchapp.services.providers import provider_service
+    from researchapp.services import fhir
 
     service = provider_service()
     provider = service.find_provider(name=request.GET['doctor'])
 
-    return {'provider': provider}
+    return {
+        'provider': provider,
+        'authorize_url': fhir.get_oauth_uris(provider)['authorize'],
+    }
 
 
 @view_config(route_name='connected', renderer='templates/connected.jinja2')
@@ -49,7 +53,7 @@ def view_connected(request):
     return {'patient': patient}
 
 
-@view_config(route_name='authorized')
+@view_config(route_name='authorized', check_csrf='state')
 def authorized(request):
     from researchapp.services.participants import participant_service
     from researchapp.services.providers import provider_service
