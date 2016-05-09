@@ -9,7 +9,7 @@ default_locale_name = en
 pyramid.includes = pyramid_debugtoolbar
                     pyramid_tm
                     pyramid_jinja2
-					
+
 jinja2.directories = researchapp:templates
 
 #SQlalchemy configuration (The prefix `sqlalchemy.` can be changed IF you change it in __init__.py's engine_from_config() call too
@@ -17,7 +17,7 @@ sqlalchemy.url=mysql+mysqldb://root:root123@localhost/test
 sqlalchemy.pool_recycle = 3600
 sqlalchemy.pool_size = 20
 
-es_url = https://search-s4s-logs-xsjsafiwd7vkpiucmjqmdjkp7y.us-west-2.es.amazonaws.com/reference-research-app/log/
+es_url = # An ElasticSearch endpoint including index and type
 
 
 [pipeline:main]
