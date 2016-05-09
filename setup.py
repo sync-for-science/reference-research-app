@@ -6,7 +6,7 @@ here = os.path.abspath(os.path.dirname(__file__))
 README = open(os.path.join(here, 'README.md')).read()
 CHANGES = open(os.path.join(here, 'CHANGES.txt')).read()
 
-requires=['pyramid>=1.4', 'pyramid_jinja2', 'jinja2','sqlalchemy', 'mysqlclient', 'waitress','pyramid_tm','pyramid_debugtoolbar','zope.sqlalchemy']
+requires=['pyramid==1.6.1', 'pyramid_jinja2', 'jinja2','sqlalchemy', 'mysqlclient', 'waitress','pyramid_tm','pyramid_debugtoolbar','zope.sqlalchemy']
 
 setup(name='ResearchApp',
       version='0.0',
@@ -31,6 +31,8 @@ setup(name='ResearchApp',
       entry_points = """\
       [paste.app_factory]
       main = researchapp:main
+      [console_scripts]
+      initialize_researchapp_db = researchapp.initialize_db:main
       """,
       paster_plugins=['pyramid'],
       )

@@ -9,16 +9,22 @@ default_locale_name = en
 pyramid.includes = pyramid_debugtoolbar
                     pyramid_tm
                     pyramid_jinja2
+                    pyramid_beaker
+                    researchapp.services.logging
 
 jinja2.directories = researchapp:templates
 
 #SQlalchemy configuration (The prefix `sqlalchemy.` can be changed IF you change it in __init__.py's engine_from_config() call too
-sqlalchemy.url=mysql+mysqldb://root:root123@localhost/test
-sqlalchemy.pool_recycle = 3600
-sqlalchemy.pool_size = 20
+sqlalchemy.url=sqlite:///db.sqlite3
+
+session.type = file
+session.data_dir = %(here)s/data/sessions/data
+session.lock_dir = %(here)s/data/sessions/lock
+session.key = mykey
+session.secret = d6;PZe)d7F[c,x8Fa27(
+session.cookie_on_exception = true
 
 es_url = # An ElasticSearch endpoint including index and type
-
 
 [pipeline:main]
 pipeline =
@@ -48,6 +54,11 @@ handlers = console
 level = DEBUG
 handlers =
 qualname = researchapp
+
+[logger_sqlalchemy.engine.base.Engine]
+level = INFO
+handlers =
+qualname = sqlalchemy.engine.base.Engine
 
 [handler_console]
 class = StreamHandler

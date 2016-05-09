@@ -28,34 +28,51 @@ def view_share_my_data(request):
 @view_config(route_name='consent', renderer='templates/consent.jinja2')
 def view_consent(request):
     from researchapp.services.providers import provider_service
+    from researchapp.services import fhir
+    import uuid
 
     service = provider_service()
     provider = service.find_provider(name=request.GET['doctor'])
-    oauth_config = service.oauth_for_provider(provider)
 
-    return {'provider': provider, 'oauth_config': oauth_config}
+    # set a new "state" token
+    request.session['state'] = str(uuid.uuid4())
+
+    return {
+        'provider': provider,
+        'authorize_url': fhir.get_oauth_uris(provider)['authorize'],
+        'state': request.session['state']
+    }
 
 
 @view_config(route_name='connected', renderer='templates/connected.jinja2')
 def view_connected(request):
-    from researchapp.services.patients import patient_service
+    from researchapp.services.participants import participant_service
+    from researchapp.services.providers import provider_service
     from researchapp.services.fhir import get_patient
 
-    service = patient_service()
-    patient = service.refresh_authorization('1551992')
+    participant = participant_service().get_participant('1551992')
+    provider = provider_service().find_provider()
 
-    fhir_patient = get_patient(patient)
+    patient = get_patient(participant, provider)
 
-    return {'patient': fhir_patient}
+    return {'patient': patient}
 
 
 @view_config(route_name='authorized')
 def authorized(request):
-    from researchapp.services.patients import patient_service
-    from pyramid.httpexceptions import HTTPFound
+    from researchapp.services.participants import participant_service
+    from researchapp.services.providers import provider_service
+    from pyramid.httpexceptions import HTTPFound, HTTPForbidden
 
-    service = patient_service()
-    service.store_authorization(request.GET)
+    # make sure that "state" is what we provided
+    if request.GET['state'] != request.session['state']:
+        raise HTTPForbidden()
+
+    # state tokens should only be used once
+    request.session['state'] = None
+
+    provider = provider_service().find_provider()
+    participant_service().store_authorization(request.GET, provider)
 
     url = request.route_url('connected')
 

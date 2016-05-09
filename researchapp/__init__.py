@@ -1,4 +1,5 @@
 """ Main """
+from pyramid_beaker import session_factory_from_settings
 from pyramid.config import Configurator
 from pyramid_jinja2 import renderer_factory
 from sqlalchemy import engine_from_config
@@ -18,10 +19,11 @@ def main(global_config, **settings):  # pylint: disable=unused-argument
     # Binding engine to the model
     initialize_sql(db_engine)
 
-    config = Configurator(settings=settings)
+    config = Configurator(settings=settings,
+                          root_factory='researchapp.models.Root')
 
-    config.include('pyramid_jinja2')
-    config.include('researchapp.services.logging')
+    session_factory = session_factory_from_settings(settings)
+    config.set_session_factory(session_factory)
 
     # The views/routes are added here
     config.add_static_view('static', 'static')
