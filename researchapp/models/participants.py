@@ -33,7 +33,6 @@ class Participant(Base):
 
     def authorization(self):
         """ we want the most recent authorization """
-        print(self.authorizations)
         return self.authorizations[-1]
 
 

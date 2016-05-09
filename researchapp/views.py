@@ -29,13 +29,18 @@ def view_share_my_data(request):
 def view_consent(request):
     from researchapp.services.providers import provider_service
     from researchapp.services import fhir
+    import uuid
 
     service = provider_service()
     provider = service.find_provider(name=request.GET['doctor'])
 
+    # set a new "state" token
+    request.session['state'] = str(uuid.uuid4())
+
     return {
         'provider': provider,
         'authorize_url': fhir.get_oauth_uris(provider)['authorize'],
+        'state': request.session['state']
     }
 
 
@@ -53,11 +58,18 @@ def view_connected(request):
     return {'patient': patient}
 
 
-@view_config(route_name='authorized', check_csrf='state')
+@view_config(route_name='authorized')
 def authorized(request):
     from researchapp.services.participants import participant_service
     from researchapp.services.providers import provider_service
-    from pyramid.httpexceptions import HTTPFound
+    from pyramid.httpexceptions import HTTPFound, HTTPForbidden
+
+    # make sure that "state" is what we provided
+    if request.GET['state'] != request.session['state']:
+        raise HTTPForbidden()
+
+    # state tokens should only be used once
+    request.session['state'] = None
 
     provider = provider_service().find_provider()
     participant_service().store_authorization(request.GET, provider)

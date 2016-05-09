@@ -11,7 +11,7 @@
         <input type="hidden" name="response_type" value="code" />
         <input type="hidden" name="scope" value="patient/*.read offline_access" />
         <input type="hidden" name="redirect_uri" value="http://52.39.26.206:6543/authorized" />
-        <input type="hidden" name="state" value="{{ request.session.get_csrf_token() }}" />
+        <input type="hidden" name="state" value="{{ state }}" />
         <input type="hidden" name="aud" value="{{ provider.fhir_url }}" />
 
         <button type="submit" class="btn btn-primary btn-lg">Share my electronic health records &raquo;</button>
