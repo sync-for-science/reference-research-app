@@ -21,6 +21,7 @@ def main(global_config, **settings):  # pylint: disable=unused-argument
     config = Configurator(settings=settings)
 
     config.include('pyramid_jinja2')
+    config.include('researchapp.services.logging')
 
     # The views/routes are added here
     config.add_static_view('static', 'static')
