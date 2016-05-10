@@ -14,8 +14,7 @@ def get_oauth_uris(provider):
 
     Params
     ------
-    provider : dict
-        fhir_url : string
+    provider : researchapp.models.providers.Provider
 
     Return
     ------
@@ -23,7 +22,7 @@ def get_oauth_uris(provider):
         authorize : string
         token : string
     """
-    url = '{url}/metadata'.format(url=provider['fhir_url'])
+    url = '{url}/metadata'.format(url=provider.fhir_url)
     headers = {
         'Accept': 'application/json+fhir',
     }
@@ -42,7 +41,7 @@ def get_patient(participant, provider):
     token = participant.authorization().refresh_token
     auth = oauth.refresh(token, provider)
 
-    url = '{url}/Patient/{patient}'.format(url=provider['fhir_url'],
+    url = '{url}/Patient/{patient}'.format(url=provider.fhir_url,
                                            patient=auth['patient'])
     authorization = '{token_type} {access_token}'.format(**auth)
     headers = {
@@ -52,5 +51,32 @@ def get_patient(participant, provider):
 
     response = requests.get(url, headers=headers)
     log(response)
+
+    return response.json()
+
+
+def query(participant, provider, resource):
+    """ Does a query.
+
+    TODO: needs to support pagination.
+    """
+    token = participant.authorization().refresh_token
+    auth = oauth.refresh(token, provider)
+
+    resource = resource.format(patientId=auth['patient'])
+    url = '{url}/{resource}'.format(url=provider.fhir_url,
+                                    resource=resource)
+
+    authorization = '{token_type} {access_token}'.format(**auth)
+    headers = {
+        'Authorization': authorization,
+        'Accept': 'application/json',
+    }
+
+    response = requests.get(url, headers=headers)
+    log(response)
+
+    assert response.status_code == 200, \
+            'Non-200 status code {0}'.format(response.status_code)
 
     return response.json()

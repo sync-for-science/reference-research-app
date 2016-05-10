@@ -32,7 +32,8 @@ setup(name='ResearchApp',
       [paste.app_factory]
       main = researchapp:main
       [console_scripts]
-      initialize_researchapp_db = researchapp.initialize_db:main
+      initialize_db = researchapp.console:initialize_db
+      fetch_participant_resources = researchapp.console:fetch_participant_resources
       """,
       paster_plugins=['pyramid'],
       )

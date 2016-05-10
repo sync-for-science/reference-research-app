@@ -48,14 +48,14 @@ def view_consent(request):
 def view_connected(request):
     from researchapp.services.participants import participant_service
     from researchapp.services.providers import provider_service
+    from researchapp.services.resources import resource_service
     from researchapp.services.fhir import get_patient
 
     participant = participant_service().get_participant('1551992')
-    provider = provider_service().find_provider()
 
-    patient = get_patient(participant, provider)
+    resources = resource_service().find_by_participant(participant)
 
-    return {'patient': patient}
+    return {'resources': resources}
 
 
 @view_config(route_name='authorized')
