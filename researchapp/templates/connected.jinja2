@@ -6,15 +6,11 @@
 
 {% block body %}
 <div>
-    <Pre>{{ patient | pprint }}</pre>
     <h2>Quick stats</h2>
     <ul>
-        <li>10 medications</li>
-        <li>3 allergies</li>
-        <li>6 immunizations</li>
-        <li>47 lab tests</li>
+        {% for group in resources|groupby('fhir_resource_type') %}
+        <li>{{ group.list | length }} {{ group.grouper }}s</li>
+        {% endfor %}
     </ul>
-    <br>
-    <a class="btn btn-primary btn-lg" href="#" role="button">View full details</a>
 </div>
 {% endblock %}

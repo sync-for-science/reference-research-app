@@ -1,11 +1,38 @@
 """ Providers Service
 """
+from researchapp.models import DBSession
+from researchapp.models.providers import Provider
 
 
-def provider_service(which='file'):
+def provider_service(which='db'):
     """ factory method """
     if which == 'file':
         return FileService()
+    if which == 'db':
+        return DbService()
+
+
+class DbService(object):
+    """ Database backed ParticipantService
+    """
+
+    def __init__(self):
+        """ init """
+
+    def _query(self, **kwargs):
+        """ Builds a Query to be used downstream. """
+
+        return DBSession.query(Provider).filter_by(**kwargs)
+
+    def filter_providers(self, **kwargs):
+        """ Return all the matching providers """
+
+        return self._query(**kwargs).all()
+
+    def find_provider(self, **kwargs):
+        """ Find a single provider """
+
+        return self._query(**kwargs).one()
 
 
 class FileService(object):
@@ -22,7 +49,7 @@ class FileService(object):
 
         if 'name' in kwargs:
             providers = [provider for provider in providers
-                         if provider['name'] == kwargs['name']]
+                         if provider.name == kwargs['name']]
 
         return providers
 
@@ -37,6 +64,8 @@ class FileService(object):
 
         try:
             with open('providers.json') as handle:
-                return json.load(handle)
+                providers = [Provider(**provider) for provider
+                             in json.load(handle)]
+                return providers
         except FileNotFoundError:
             return []
