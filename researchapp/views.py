@@ -51,7 +51,7 @@ def view_connected(request):
     from researchapp.services.resources import resource_service
     from researchapp.services.fhir import get_patient
 
-    participant = participant_service().get_participant('1551992')
+    participant = participant_service().get_participant(1)
 
     resources = resource_service().find_by_participant(participant)
 

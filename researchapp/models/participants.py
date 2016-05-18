@@ -33,7 +33,10 @@ class Participant(Base):
 
     def authorization(self):
         """ we want the most recent authorization """
-        return self.authorizations[-1]
+        try:
+            return self.authorizations[-1]
+        except IndexError:
+            return None
 
 
 class Authorization(Base):

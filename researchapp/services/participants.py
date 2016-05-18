@@ -1,33 +1,36 @@
 """ Participants Service
 """
 import json
-from researchapp.models import DBSession
+
 from researchapp.models.participants import Participant, Authorization
+from researchapp.services import oauth
 
 
 def participant_service(which='db'):
     """ factory method """
+    from researchapp.models import DBSession
+
     if which == 'file':
         return FileService()
     if which == 'db':
-        return DbService()
+        return DbService(DBSession)
 
 
 class DbService(object):
     """ Database backed ParticipantService
     """
 
-    def __init__(self):
+    def __init__(self, session):
         """ init """
+        self._session = session
 
     def store_authorization(self, grant, provider):
         """ Stores an authorization """
-        from researchapp.services import oauth
         code = grant['code']
 
         token = oauth.code_to_token(code, provider)
 
-        participant = DBSession.\
+        participant = self._session.\
             query(Participant).\
             filter_by(id=1).\
             one()
@@ -39,16 +42,16 @@ class DbService(object):
                                       refresh_token=token['refresh_token'])
         participant.authorizations.append(authorization)
 
-        DBSession.add(authorization)
+        self._session.add(authorization)
 
     def get_participant(self, participant_id):  # pylint: disable=unused-argument
         """ Returns a single identified participant.
 
         Currently we ignore participant_id because there is only one.
         """
-        participant = DBSession.\
+        participant = self._session.\
             query(Participant).\
-            filter_by(id=1).\
+            filter_by(id=participant_id).\
             one()
 
         return participant
@@ -64,7 +67,6 @@ class FileService(object):
 
     def store_authorization(self, authorization, provider):
         """ Stores an authorization """
-        from researchapp.services import oauth
         code = authorization['code']
 
         token = oauth.code_to_token(code, provider)
