@@ -40,7 +40,7 @@ def fetch_participant_resources(request):  # pylint: disable=unused-argument
     import transaction
 
     with transaction.manager:
-        participant = participant_service().get_participant('1551992')
+        participant = participant_service().get_participant(1)
         provider = provider_service().find_provider()
 
         resource_service().sync(participant, provider)
