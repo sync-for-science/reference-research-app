@@ -50,8 +50,16 @@ class DbService(object):
     def __init__(self):
         """ init """
 
-    def sync(self, participant, provider):
+    def sync(self, participant):
         """ Sync, FOR SCIENCE! """
+
+        for authorization in participant.authorizations:
+            provider = authorization.provider
+
+            self._sync_provider(participant, provider)
+
+    def _sync_provider(self, participant, provider):
+        """ Sync just one provider. """
 
         for ccds, endpoints in S4S_RESOURCES.items():
             for endpoint in endpoints:

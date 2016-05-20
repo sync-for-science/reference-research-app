@@ -49,3 +49,7 @@ class Authorization(Base):
     client_id = Column(String)
     patient = Column(String)
     refresh_token = Column(String)
+
+    # many to one Authorization -> Provider
+    provider_id = Column(Integer, ForeignKey('provider.id'))
+    provider = relationship('Provider')
