@@ -39,7 +39,8 @@ class DbService(object):
                                       token_type=token['token_type'],
                                       client_id=token['client_id'],
                                       patient=token['patient'],
-                                      refresh_token=token['refresh_token'])
+                                      refresh_token=token['refresh_token'],
+                                      provider=provider)
         participant.authorizations.append(authorization)
 
         self._session.add(authorization)

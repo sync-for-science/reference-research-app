@@ -28,7 +28,7 @@ def view_share_my_data(request):
 @view_config(route_name='consent', renderer='templates/consent.jinja2')
 def view_consent(request):
     from researchapp.services.providers import provider_service
-    from researchapp.services import fhir
+    from researchapp.services import fhir, oauth
     import uuid
 
     service = provider_service()
@@ -40,7 +40,9 @@ def view_consent(request):
     return {
         'provider': provider,
         'authorize_url': fhir.get_oauth_uris(provider)['authorize'],
-        'state': request.session['state']
+        'state': request.session['state'],
+        'redirect_uri': oauth.redirect_uri(),
+        'client_id': oauth.CLIENT_ID,
     }
 
 
@@ -55,7 +57,12 @@ def view_connected(request):
 
     resources = resource_service().find_by_participant(participant)
 
-    return {'resources': resources}
+    providers = [authz.provider for authz in participant.authorizations]
+
+    return {
+        'resources': resources,
+        'providers': providers,
+    }
 
 
 @view_config(route_name='authorized')

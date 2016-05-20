@@ -41,9 +41,8 @@ def fetch_participant_resources(request):  # pylint: disable=unused-argument
 
     with transaction.manager:
         participant = participant_service().get_participant(1)
-        provider = provider_service().find_provider()
 
-        resource_service().sync(participant, provider)
+        resource_service().sync(participant)
 
 
 @console_config
@@ -61,6 +60,6 @@ def initialize_db(request):  # pylint: disable=unused-argument
         provider = Provider(name="Dr. Smart",
                             city="Boston",
                             state="Massachusetts",
-                            fhir_url="http://52.39.26.206:9000/api/fhir")
+                            fhir_url="http://smart/api/fhir")
         DBSession.add(provider)
 
