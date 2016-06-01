@@ -7,14 +7,14 @@ from researchapp.services import oauth
 OAUTH_URIS_DEFINITION = 'http://fhir-registry.smarthealthit.org/StructureDefinition/oauth-uris'
 
 
-def get_oauth_uris(provider):
+def get_oauth_uris(practitioner):
     """ Conformance statement should define a set of oauth uris.
 
     See: http://fhir-docs.smarthealthit.org/argonaut-dev/specification/#5
 
     Params
     ------
-    provider : researchapp.models.providers.Provider
+    practitioner : researchapp.models.providers.Practitioner
 
     Return
     ------
@@ -22,7 +22,7 @@ def get_oauth_uris(provider):
         authorize : string
         token : string
     """
-    url = '{url}/metadata'.format(url=provider.fhir_url)
+    url = '{url}/metadata'.format(url=practitioner.fhir_url)
     headers = {
         'Accept': 'application/json+fhir',
     }

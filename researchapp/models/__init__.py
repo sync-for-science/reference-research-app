@@ -17,4 +17,4 @@ def initialize_sql(engine):
     DBSession.configure(bind=engine)
 
 from .participants import Participant
-from .providers import Provider
+from .providers import Practitioner

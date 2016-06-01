@@ -1,0 +1,39 @@
+---
+class: !!python/name:researchapp.models.participants.Participant
+args: {}
+---
+class: !!python/name:researchapp.models.providers.Organization
+args:
+  id: smart
+  name: Smart
+---
+class: !!python/name:researchapp.models.providers.Organization
+args:
+  id: allscripts
+  name: Allscripts
+---
+class: !!python/name:researchapp.models.providers.Api
+args:
+  url: http://smart.dev.syncfor.science:9000/api/fhir/
+  client_id: test-suite
+  client_secret: demo-secret-s4s
+  scope: launch patient/*.read offline_access
+  organization_id: smart
+---
+class: !!python/name:researchapp.models.providers.Api
+args:
+  url: https://uat-fhir.followmyhealth.com/api/
+  client_id: 74efd7ee-88d0-47ee-acbe-43775da0922f
+  client_secret: O2DekW7LTkyz9vcupzLy22JjMje0+ZftF3EPnvS3GVlaEe6ZOir2bhNdlp4w9yIT6r1THw1JSsZa0Qf9jkgIlw==
+  scope: launch/patient patient/*.read offline_access
+  organization_id: allscripts
+---
+class: !!python/name:researchapp.models.providers.Practitioner
+args:
+  name: Dr. Smart
+  organization_id: smart
+---
+class: !!python/name:researchapp.models.providers.Practitioner
+args:
+  name: Dr. Allscripts
+  organization_id: allscripts

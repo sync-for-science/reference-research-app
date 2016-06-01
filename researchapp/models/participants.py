@@ -50,6 +50,6 @@ class Authorization(Base):
     patient = Column(String)
     refresh_token = Column(String)
 
-    # many to one Authorization -> Provider
-    provider_id = Column(Integer, ForeignKey('provider.id'))
-    provider = relationship('Provider')
+    # many to one Authorization -> Practitioner
+    practitioner_id = Column(Integer, ForeignKey('practitioner.id'))
+    practitioner = relationship('Practitioner')

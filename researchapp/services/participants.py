@@ -24,23 +24,24 @@ class DbService(object):
         """ init """
         self._session = session
 
-    def store_authorization(self, grant, provider):
+    def store_authorization(self, grant, practitioner):
         """ Stores an authorization """
         code = grant['code']
 
-        token = oauth.code_to_token(code, provider)
+        token = oauth.code_to_token(code, practitioner)
 
         participant = self._session.\
             query(Participant).\
             filter_by(id=1).\
             one()
-        authorization = Authorization(scope=token['scope'],
-                                      access_token=token['access_token'],
-                                      token_type=token['token_type'],
-                                      client_id=token['client_id'],
-                                      patient=token['patient'],
-                                      refresh_token=token['refresh_token'],
-                                      provider=provider)
+
+        authorization = Authorization(scope=token.get('scope'),
+                                      access_token=token.get('access_token'),
+                                      token_type=token.get('token_type'),
+                                      client_id=token.get('client_id'),
+                                      patient=token.get('patient'),
+                                      refresh_token=token.get('refresh_token'),
+                                      practitioner=practitioner)
         participant.authorizations.append(authorization)
 
         self._session.add(authorization)

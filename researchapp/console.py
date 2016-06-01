@@ -1,4 +1,15 @@
 """ I'm a cli script """
+import os
+import sys
+import yaml
+
+from pyramid.paster import bootstrap
+import transaction
+
+from researchapp.services.participants import participant_service
+from researchapp.services.providers import provider_service
+from researchapp.services.resources import resource_service
+from researchapp.models import DBSession, Base
 
 
 USAGE_MESSAGE = 'Usage: {cmd} <config_uri>\n(example: "{cmd} development.ini")'
@@ -8,11 +19,8 @@ def console_config(route_func):
     """ Decorator  to bootstrap cli "routes". """
 
     def func_wrapper():
-        """ Bootstrap the application, call the original method. """
-        import os
-        import sys
-        from pyramid.paster import bootstrap
-
+        """ Bootstrap the application, call the original method.
+        """
         argv = sys.argv
         if len(argv) != 2:
             cmd = os.path.basename(argv[0])
@@ -34,11 +42,6 @@ def console_config(route_func):
 def fetch_participant_resources(request):  # pylint: disable=unused-argument
     """ For each participant/provider combo, download all their resources.
     """
-    from researchapp.services.participants import participant_service
-    from researchapp.services.providers import provider_service
-    from researchapp.services.resources import resource_service
-    import transaction
-
     with transaction.manager:
         participant = participant_service().get_participant(1)
 
@@ -47,19 +50,13 @@ def fetch_participant_resources(request):  # pylint: disable=unused-argument
 
 @console_config
 def initialize_db(request):  # pylint: disable=unused-argument
-    """ Initialize database tables, create a Participant record. """
-    from researchapp.models import DBSession, Base, Participant, Provider
-    import transaction
-
+    """ Initialize database tables, create a Participant record.
+    """
     Base.metadata.create_all(DBSession.get_bind())
 
     with transaction.manager:
-        participant = Participant()
-        DBSession.add(participant)
-
-        provider = Provider(name="Dr. Smart",
-                            city="Boston",
-                            state="Massachusetts",
-                            fhir_url="http://smart/api/fhir")
-        DBSession.add(provider)
-
+        with open('researchapp/fixtures.yml') as handle:
+            records = yaml.load_all(handle.read())
+            for record in records:
+                resource = record['class'](**record['args'])
+                DBSession.add(resource)
