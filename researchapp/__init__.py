@@ -33,6 +33,7 @@ def main(global_config, **settings):  # pylint: disable=unused-argument
     config.add_route('consent', '/consent')
     config.add_route('connected', '/connected')
     config.add_route('authorized', '/authorized')
+    config.add_route('fhir', '/fhir/{resourceType}')
     config.scan()
 
     return config.make_wsgi_app()

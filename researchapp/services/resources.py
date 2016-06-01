@@ -15,11 +15,11 @@ S4S_RESOURCES = {
         'Condition?patient={patientId}',
     ],
     'Medications and allergies': [
-        'MedicationOrder?patient={{patientId}}',
-        'MedicationStatement?patient={{patientId}}',
-        'MedicationDispense?patient={{patientId}}',
-        'MedicationAdministration?patient={{patientId}}',
-        'AllergyIntolerance?patient={{patientId}}',
+        'MedicationOrder?patient={patientId}',
+        'MedicationStatement?patient={patientId}',
+        'MedicationDispense?patient={patientId}',
+        'MedicationAdministration?patient={patientId}',
+        'AllergyIntolerance?patient={patientId}',
     ],
     'Lab results': [
         'Observation?category=laboratory&patient={patientId}',

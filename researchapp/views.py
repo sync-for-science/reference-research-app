@@ -86,3 +86,29 @@ def authorized(request):
     url = request.route_url('connected')
 
     return HTTPFound(location=url)
+
+
+@view_config(route_name='fhir', renderer='json')
+def fhir_resource(request):
+    from researchapp.services.providers import provider_service
+    from pyramid.httpexceptions import HTTPForbidden
+
+    if request.matchdict['resourceType'] != 'Practitioner':
+        raise HTTPForbidden()
+
+    def to_fhir(resource):
+        return {
+            'resource': {
+                'resourceType': 'Practitioner',
+                'name': resource.name,
+            }
+        }
+
+    practitioners = provider_service().filter_providers(**request.GET)
+    entries = [to_fhir(practitioner) for practitioner in practitioners]
+
+    return {
+        'resourceType': 'Bundle',
+        'total': len(entries),
+        'entries': entries,
+    }

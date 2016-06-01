@@ -31,10 +31,13 @@ class Participant(Base):
     authorizations = relationship('Authorization',
                                   secondary=PARTICIPANT_AUTHORIZATION)
 
-    def authorization(self):
-        """ we want the most recent authorization """
+    def authorization(self, practitioner):
+        """ We want the most recent authorization.
+        """
+        authorizations = [authz for authz in self.authorizations
+                          if authz.practitioner == practitioner]
         try:
-            return self.authorizations[-1]
+            return authorizations[-1]
         except IndexError:
             return None
 
@@ -53,3 +56,7 @@ class Authorization(Base):
     # many to one Authorization -> Practitioner
     practitioner_id = Column(Integer, ForeignKey('practitioner.id'))
     practitioner = relationship('Practitioner')
+
+    def update(self, token):
+        self.access_token = token.get('access_token', self.access_token)
+        self.refresh_token = token.get('refresh_token', self.refresh_token)
