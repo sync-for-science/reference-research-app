@@ -1,6 +1,7 @@
 """ Participants Service
 """
 import json
+import subprocess
 
 from researchapp.models.participants import Participant, Authorization
 from researchapp.services import oauth
@@ -45,6 +46,9 @@ class DbService(object):
         participant.authorizations.append(authorization)
 
         self._session.add(authorization)
+
+        # TODO: Something more robust than this to kick-start resource syncing
+        subprocess.Popen(['fetch_participant_resources', 'development.ini'])
 
     def get_participant(self, participant_id):  # pylint: disable=unused-argument
         """ Returns a single identified participant.

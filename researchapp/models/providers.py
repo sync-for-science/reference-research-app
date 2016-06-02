@@ -21,27 +21,26 @@ class Practitioner(Base):
 
     @property
     def fhir_url(self):
-        return self.organization.api.url
+        return self.organization.url
 
     @property
     def client_id(self):
-        return self.organization.api.client_id
+        return self.organization.oauth_client.client_id
 
     @property
     def client_secret(self):
-        return self.organization.api.client_secret
+        return self.organization.oauth_client.client_secret
 
     @property
     def scope(self):
-        return self.organization.api.scope
+        return self.organization.oauth_client.scope
 
 
-class Api(Base):
-    """ A FHIR Api.
+class OAuthClient(Base):
+    """ An oAuth Client.
     """
-    __tablename__ = 'api'
+    __tablename__ = 'oauth_client'
     id = Column(Integer, primary_key=True)
-    url = Column(String)
     client_id = Column(String)
     client_secret = Column(String)
     scope = Column(String)
@@ -56,5 +55,8 @@ class Organization(Base):
     __tablename__ = 'organization'
     id = Column(String, primary_key=True)
     name = Column(String)
+    url = Column(String)
 
-    api = orm.relationship('Api', back_populates='organization', uselist=False)
+    oauth_client = orm.relationship('OAuthClient',
+                                    back_populates='organization',
+                                    uselist=False)
