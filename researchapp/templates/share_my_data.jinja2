@@ -11,11 +11,7 @@
     <form class="form-inline" action="/consent" method="get">
         <div class="form-group">
             <label for="doctor">Your doctor's name</label>
-            <select class="form-control" name="doctor" id="doctor">
-                {% for provider in providers %}
-                <option>{{ provider.name }}</option>
-                {% endfor %}
-            </select>
+            <select class="form-control" name="doctor" id="doctor"></select>
         </div>
         <button class="btn btn-default" type="submit">Find my doctor</button>
     </form>

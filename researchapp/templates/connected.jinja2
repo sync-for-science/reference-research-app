@@ -3,8 +3,8 @@
 {% block jumbotron %}
 <h2>We're connected to your medical records from</h2>
 <ul>
-    {% for provider in providers %}
-    <li>{{ provider.name }}</li>
+    {% for practitioner in practitioners %}
+    <li>{{ practitioner.name }}</li>
     {% endfor %}
 </ul>
 {% endblock %}

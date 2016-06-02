@@ -4,20 +4,18 @@ import os
 import requests
 
 
-CLIENT_ID = 'research-app'
-
-
-def code_to_token(code, provider):
+def code_to_token(code, practitioner):
     """ hi """
     from researchapp.services import fhir
-    token_url = fhir.get_oauth_uris(provider)['token']
+    token_url = fhir.get_oauth_uris(practitioner)['token']
     post_data = {
         'grant_type': 'authorization_code',
-        'client_id': CLIENT_ID,
+        'client_id': practitioner.client_id,
+        'redirect_uri': redirect_uri(),
         'code': code,
     }
-    client_auth = requests.auth.HTTPBasicAuth(CLIENT_ID,
-                                              'demo-secret-s4s')
+    client_auth = requests.auth.HTTPBasicAuth(practitioner.client_id,
+                                              practitioner.client_secret)
     response = requests.post(token_url,
                              auth=client_auth,
                              data=post_data)
@@ -25,17 +23,17 @@ def code_to_token(code, provider):
     return response.json()
 
 
-def refresh(token, provider):
+def refresh(token, practitioner):
     """ hi """
     from researchapp.services import fhir
-    token_url = fhir.get_oauth_uris(provider)['token']
+    token_url = fhir.get_oauth_uris(practitioner)['token']
     post_data = {
         'grant_type': 'refresh_token',
         'refresh_token': token,
-        'client_id': CLIENT_ID,
+        'client_id': practitioner.client_id,
     }
-    client_auth = requests.auth.HTTPBasicAuth(CLIENT_ID,
-                                              'demo-secret-s4s')
+    client_auth = requests.auth.HTTPBasicAuth(practitioner.client_id,
+                                              practitioner.client_secret)
 
     response = requests.post(token_url,
                              auth=client_auth,
@@ -45,8 +43,10 @@ def refresh(token, provider):
 
 
 def redirect_uri():
+    """ Determine the correct redirect_uri based on ENV variables.
+    """
     host = os.getenv('LETSENCRYPT_HOST')
     if host is not None:
         return 'https://' + host + '/authorized'
     else:
-        return 'http://' + os.getenv('VIRTUAL_HOST') + '/authorized'
+        return 'http://' + os.getenv('VIRTUAL_HOST', 'localhost:9003') + '/authorized'

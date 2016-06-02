@@ -2,7 +2,8 @@
 from sqlalchemy import orm
 import pytest
 
-from researchapp.models import Participant, Provider
+from researchapp.models.providers import Practitioner, Organization, OAuthClient
+from researchapp.models import Participant
 from researchapp.services import participants
 
 
@@ -29,10 +30,13 @@ def test_store_authorization(session):
     grant = {
         'code': '12345',
     }
-    provider = Provider(fhir_url='http://example.com/fhir')
+    oauth_client = OAuthClient()
+    organization = Organization(oauth_client=oauth_client,
+                                url='http://example.com/fhir/')
+    practitioner = Practitioner(organization=organization)
 
-    assert participant.authorization() is None
+    assert participant.authorization(practitioner) is None
 
-    service.store_authorization(grant, provider)
+    service.store_authorization(grant, practitioner)
 
-    assert participant.authorization() is not None
+    assert participant.authorization(practitioner) is not None

@@ -32,17 +32,18 @@ def view_consent(request):
     import uuid
 
     service = provider_service()
-    provider = service.find_provider(name=request.GET['doctor'])
+    practitioner = service.find_provider(name=request.GET['doctor'])
 
     # set a new "state" token
     request.session['state'] = str(uuid.uuid4())
+    request.session['practitioner_id'] = practitioner.id
 
     return {
-        'provider': provider,
-        'authorize_url': fhir.get_oauth_uris(provider)['authorize'],
+        'practitioner': practitioner,
+        'authorize_url': fhir.get_oauth_uris(practitioner)['authorize'],
         'state': request.session['state'],
         'redirect_uri': oauth.redirect_uri(),
-        'client_id': oauth.CLIENT_ID,
+        'client_id': practitioner.client_id,
     }
 
 
@@ -57,11 +58,11 @@ def view_connected(request):
 
     resources = resource_service().find_by_participant(participant)
 
-    providers = [authz.provider for authz in participant.authorizations]
+    practitioners = [authz.practitioner for authz in participant.authorizations]
 
     return {
         'resources': resources,
-        'providers': providers,
+        'practitioners': practitioners,
     }
 
 
@@ -77,10 +78,37 @@ def authorized(request):
 
     # state tokens should only be used once
     request.session['state'] = None
+    practitioner_id = request.session['practitioner_id']
 
-    provider = provider_service().find_provider()
-    participant_service().store_authorization(request.GET, provider)
+    practitioner = provider_service().find_provider(id=practitioner_id)
+    participant_service().store_authorization(request.GET, practitioner)
 
     url = request.route_url('connected')
 
     return HTTPFound(location=url)
+
+
+@view_config(route_name='fhir', renderer='json')
+def fhir_resource(request):
+    from researchapp.services.providers import provider_service
+    from pyramid.httpexceptions import HTTPForbidden
+
+    if request.matchdict['resourceType'] != 'Practitioner':
+        raise HTTPForbidden()
+
+    def to_fhir(resource):
+        return {
+            'resource': {
+                'resourceType': 'Practitioner',
+                'name': resource.name,
+            }
+        }
+
+    practitioners = provider_service().filter_providers(**request.GET)
+    entries = [to_fhir(practitioner) for practitioner in practitioners]
+
+    return {
+        'resourceType': 'Bundle',
+        'total': len(entries),
+        'entries': entries,
+    }

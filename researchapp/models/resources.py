@@ -28,5 +28,5 @@ class Resource(Base):
     participant_id = Column(Integer, ForeignKey('participant.id'))
     participant = relationship('Participant')
 
-    provider_id = Column(Integer, ForeignKey('provider.id'))
-    provider = relationship('Provider')
+    practitioner_id = Column(Integer, ForeignKey('practitioner.id'))
+    practitioner = relationship('Practitioner')
