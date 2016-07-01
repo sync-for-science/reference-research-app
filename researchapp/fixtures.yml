@@ -29,7 +29,7 @@ args:
 class: !!python/name:researchapp.models.providers.OAuthClient
 args:
   client_id: research-app
-  client_secret: cec54373-232b-41a9-af02-3489f2d6e3cc
+  client_secret: demo-secret-s4s
   scope: launch/patient patient/*.read offline_access
   organization_id: smart
 ---
@@ -44,7 +44,7 @@ class: !!python/name:researchapp.models.providers.OAuthClient
 args:
   client_id: b3aaf919-b9ff-4a19-a73e-2ffae6c00efa
   client_secret: ''
-  scope: launch patient/Patient.read patient/Observation.read patient/Condition.read patient/MedicationOrder.read patient/MedicationStatement.read patient/MedicationDispense.read patient/MedicationAdministration.read patient/AllergyIntolerance.read patient/Procedure.read patient/Immunization.read patient/DocumentReference.read online_access
+  scope: launch patient/Patient.read patient/Encounter.read patient/Observation.read patient/Condition.read patient/MedicationOrder.read patient/MedicationStatement.read patient/MedicationDispense.read patient/MedicationAdministration.read patient/AllergyIntolerance.read patient/Procedure.read patient/Immunization.read patient/DocumentReference.read online_access
   organization_id: cerner
 ---
 class: !!python/name:researchapp.models.providers.OAuthClient
