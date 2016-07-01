@@ -1,0 +1,2 @@
+0 0 * * * root fetch_participant_resources /usr/src/app/development.ini >> /var/log/cron.log
+#

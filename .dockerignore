@@ -1,0 +1,12 @@
+ENV
+.git
+*.pyc
+node_modules
+build
+.cache
+*.egg-info
+.DS_Store
+*.egg-info
+development.ini
+*.sqlite3
+data
