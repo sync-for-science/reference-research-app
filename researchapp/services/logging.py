@@ -50,9 +50,13 @@ def _clean(data):
         - method
         - url
     """
-    valid = ['body', 'headers', 'method', 'url']
+    valid = ['body', '_content', 'headers', 'method', 'url']
     data = {k: v for k, v in vars(data).items() if k in valid}
 
     data['headers'] = dict(data['headers'])
+
+    if '_content' in data:
+        data['body'] = data['_content'].decode('utf-8')
+        del data['_content']
 
     return data
