@@ -3,18 +3,18 @@
 import json
 import subprocess
 
+from researchapp.extensions import db
 from researchapp.models.participants import Participant, Authorization
 from researchapp.services import oauth
 
 
 def participant_service(which='db'):
     """ factory method """
-    from researchapp.models import DBSession
 
     if which == 'file':
         return FileService()
     if which == 'db':
-        return DbService(DBSession)
+        return DbService(db.session)
 
 
 class DbService(object):
@@ -46,9 +46,10 @@ class DbService(object):
         participant.authorizations.append(authorization)
 
         self._session.add(authorization)
+        self._session.commit()
 
         # TODO: Something more robust than this to kick-start resource syncing
-        subprocess.Popen(['fetch_participant_resources', 'development.ini'])
+        subprocess.Popen(['./manage.py', 'fetch_participant_resources'])
 
     def get_participant(self, participant_id):  # pylint: disable=unused-argument
         """ Returns a single identified participant.

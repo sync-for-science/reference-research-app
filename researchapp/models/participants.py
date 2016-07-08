@@ -11,18 +11,17 @@ from sqlalchemy import (
 )
 from sqlalchemy.orm import relationship
 
-from . import Base
+from researchapp.extensions import db
 
 
-PARTICIPANT_AUTHORIZATION = Table(
+PARTICIPANT_AUTHORIZATION = db.Table(
     'participant_authorization',
-    Base.metadata,
     Column('participant_id', ForeignKey('participant.id'), primary_key=True),
     Column('authorization_id', ForeignKey('authorization.id'), primary_key=True)
 )
 
 
-class Participant(Base):
+class Participant(db.Model):
     """ Participant """
     __tablename__ = 'participant'
     id = Column(Integer, primary_key=True)
@@ -51,7 +50,7 @@ class Participant(Base):
             return None
 
 
-class Authorization(Base):
+class Authorization(db.Model):
     """ Authorization """
     __tablename__ = 'authorization'
     id = Column(Integer, primary_key=True)
