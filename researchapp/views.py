@@ -1,10 +1,17 @@
 # pylint: disable=unused-argument,missing-docstring
 """ Some views"""
+import json
+
 from pyramid.i18n import TranslationStringFactory
 from pyramid.view import view_config
 
 
 _ = TranslationStringFactory('ResearchApp')
+
+
+def prettify_json(json_str):
+    data = json.loads(json_str)
+    return json.dumps(data, indent=4)
 
 
 @view_config(route_name='home', renderer='templates/home.jinja2')
@@ -52,17 +59,11 @@ def view_connected(request):
     from researchapp.services.participants import participant_service
     from researchapp.services.providers import provider_service
     from researchapp.services.resources import resource_service
-    from researchapp.services.fhir import get_patient
 
     participant = participant_service().get_participant(1)
 
-    resources = resource_service().find_by_participant(participant)
-
-    practitioners = [authz.practitioner for authz in participant.authorizations]
-
     return {
-        'resources': resources,
-        'practitioners': practitioners,
+        'connections': resource_service().find_all_for_participant(participant)
     }
 
 

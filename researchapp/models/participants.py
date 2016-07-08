@@ -31,6 +31,15 @@ class Participant(Base):
     authorizations = relationship('Authorization',
                                   secondary=PARTICIPANT_AUTHORIZATION)
 
+    @property
+    def practitioners(self):
+        practitioners = set()
+        for authz in self.authorizations:
+            practitioners.add(authz.practitioner)
+
+        return practitioners
+
+
     def authorization(self, practitioner):
         """ We want the most recent authorization.
         """

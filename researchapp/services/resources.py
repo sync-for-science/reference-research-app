@@ -71,10 +71,17 @@ class DbService(object):
                     print(err, endpoint)
                     continue
 
+                if not bundle:
+                    continue
+
                 for entry in bundle.get('entry', []):
                     self.save_resource(entry['resource'],
                                        participant,
                                        practitioner)
+
+        resource = fhir.get_patient(participant, practitioner)
+        if resource:
+            self.save_resource(resource, participant, practitioner)
 
     def save_resource(self, entry, participant, practitioner):
         """ Save a resource to the database.
@@ -99,3 +106,22 @@ class DbService(object):
             all()
 
         return resources
+
+    def find_all_for_participant(self, participant):
+        """ Get all the authorizations and resources for a participant.
+        """
+        found = []
+
+        for practitioner in participant.practitioners:
+            resources = DBSession.query(Resource).\
+                filter_by(participant=participant).\
+                filter_by(practitioner=practitioner).\
+                group_by(Resource.fhir_id).\
+                all()
+
+            found.append({
+                'resources': resources,
+                'practitioner': practitioner,
+            })
+
+        return found

@@ -41,11 +41,16 @@ def get_oauth_uris(practitioner):
 
 def get_patient(participant, provider):
     """ Gets a Patient resource """
-    token = participant.authorization().refresh_token
+    token = participant.authorization(provider).refresh_token
     auth = oauth.refresh(token, provider)
 
+    if 'error' in auth:
+        return
+
+    participant.authorization(provider).update(auth)
+
     url = '{url}Patient/{patient}'.format(url=provider.fhir_url,
-                                           patient=auth['patient'])
+                                          patient=auth['patient'])
     authorization = '{token_type} {access_token}'.format(**auth)
     headers = {
         'Authorization': authorization,
@@ -66,11 +71,14 @@ def query(participant, provider, resource):
     token = participant.authorization(provider).refresh_token
     auth = oauth.refresh(token, provider)
 
+    if 'error' in auth:
+        return
+
     participant.authorization(provider).update(auth)
 
     resource = resource.format(patientId=auth['patient'])
     url = '{url}{resource}'.format(url=provider.fhir_url,
-                                    resource=resource)
+                                   resource=resource)
 
     authorization = '{token_type} {access_token}'.format(**auth)
     headers = {

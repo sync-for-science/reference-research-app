@@ -39,7 +39,10 @@ def refresh(token, practitioner):
                              auth=client_auth,
                              data=post_data)
 
-    return response.json()
+    try:
+        return response.json()
+    except:
+        return {'error': 'invalid json'}
 
 
 def redirect_uri():
