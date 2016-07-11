@@ -30,7 +30,7 @@ class: !!python/name:researchapp.models.providers.OAuthClient
 args:
   client_id: research-app
   client_secret: demo-secret-s4s
-  scope: launch/patient patient/*.read offline_access
+  scope: patient/*.read offline_access
   organization_id: smart
 ---
 class: !!python/name:researchapp.models.providers.OAuthClient

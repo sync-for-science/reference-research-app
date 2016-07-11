@@ -4,12 +4,13 @@ from flask import (
     redirect,
     render_template,
     request,
-    session,
     url_for,
 )
+from injector import inject
 from werkzeug.exceptions import Forbidden
 
 from researchapp.blueprints import share_my_data
+from researchapp.services import authorize
 
 
 @share_my_data.route('/')
@@ -23,38 +24,17 @@ def view_index():
 def view_share_my_data():
     """ Share my data.
     """
-    from researchapp.services.providers import provider_service
-
-    service = provider_service()
-    providers = service.filter_providers()
-
-    return render_template('share_my_data.jinja2', providers=providers)
+    return render_template('share_my_data.jinja2')
 
 
 @share_my_data.route('/consent')
-def view_consent():
+@inject(service=authorize.AuthorizeService)
+def view_consent(service):
     """ Consent page.
     """
-    from researchapp.services.providers import provider_service
-    from researchapp.services import fhir, oauth
-    import uuid
+    data = service.display_consent(request.args['doctor'])
 
-    service = provider_service()
-    practitioner = service.find_provider(name=request.args['doctor'])
-
-    # set a new "state" token
-    session['state'] = str(uuid.uuid4())
-    session['practitioner_id'] = practitioner.id
-
-    view_data = {
-        'practitioner': practitioner,
-        'authorize_url': fhir.get_oauth_uris(practitioner)['authorize'],
-        'state': session['state'],
-        'redirect_uri': oauth.redirect_uri(),
-        'client_id': practitioner.client_id,
-    }
-
-    return render_template('consent.jinja2', **view_data)
+    return render_template('consent.jinja2', **data)
 
 
 @share_my_data.route('/connected')
@@ -62,7 +42,6 @@ def view_connected():
     """ Show all connected providers.
     """
     from researchapp.services.participants import participant_service
-    from researchapp.services.providers import provider_service
     from researchapp.services.resources import resource_service
 
     participant = participant_service().get_participant(1)
@@ -72,22 +51,14 @@ def view_connected():
 
 
 @share_my_data.route('/authorized')
-def authorized():
+@inject(service=authorize.AuthorizeService)
+def authorized(service):
     """ Handle authorized callback.
     """
-    from researchapp.services.participants import participant_service
-    from researchapp.services.providers import provider_service
-
-    # make sure that "state" is what we provided
-    if request.args['state'] != session['state']:
+    try:
+        service.register_authorization(request.url)
+    except authorize.FHIRUnauthorizedException:
         raise Forbidden()
-
-    # state tokens should only be used once
-    session['state'] = None
-    practitioner_id = session['practitioner_id']
-
-    practitioner = provider_service().find_provider(id=practitioner_id)
-    participant_service().store_authorization(request.args, practitioner)
 
     return redirect(url_for('share_my_data.views.view_connected'))
 
