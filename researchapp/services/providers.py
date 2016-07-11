@@ -1,5 +1,6 @@
 """ Providers Service
 """
+from researchapp.extensions import db
 from researchapp.models.providers import Practitioner
 
 
@@ -19,7 +20,7 @@ class DbService(object):
     def _query(self, **kwargs):
         """ Builds a Query to be used downstream.
         """
-        return Practitioner.query.filter_by(**kwargs)
+        return db.session.query(Practitioner).filter_by(**kwargs)
 
     def filter_providers(self, **kwargs):
         """ Return all the matching practitioners.

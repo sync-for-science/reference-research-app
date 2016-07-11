@@ -41,7 +41,7 @@ def refresh(token, practitioner):
 
     try:
         return response.json()
-    except:
+    except:  # pylint: disable=bare-except
         return {'error': 'invalid json'}
 
 

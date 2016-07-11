@@ -87,7 +87,9 @@ def create_app(config_obj, no_sql=False):
 
     # Define extra jinja2 filters
     @app.template_filter('prettify_json')
-    def prettify_json(json_str):
+    def prettify_json(json_str):  # pylint: disable=unused-variable
+        """ Reads a JSON string and returns it in a human-readable format.
+        """
         data = json.loads(json_str)
         return json.dumps(data, indent=4)
 

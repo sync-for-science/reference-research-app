@@ -3,7 +3,6 @@ ENV
 .DS_Store
 *.egg-info
 node_modules
-development.ini
 *.sqlite3
 data
 .cache

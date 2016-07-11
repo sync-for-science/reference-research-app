@@ -5,6 +5,11 @@ Demo for the Patient/Participant "Share my data" workflow
 ## Installation
 
 ```
-python setup.py develop
-initialize_db development.ini
+pip install -r requirements.txt
+```
+
+## Running the app
+
+```
+./manage.py devserver
 ```

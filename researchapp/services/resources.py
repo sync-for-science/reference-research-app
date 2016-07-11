@@ -63,7 +63,7 @@ class DbService(object):
     def _sync_practitioner(self, participant, practitioner):
         """ Sync just one practitioner.
         """
-        for ccds, endpoints in S4S_RESOURCES.items():
+        for endpoints in S4S_RESOURCES.values():
             for endpoint in endpoints:
                 try:
                     bundle = fhir.query(participant, practitioner, endpoint)
@@ -94,7 +94,7 @@ class DbService(object):
                                 participant=participant,
                                 practitioner=practitioner)
             db.session.add(resource)
-        except KeyError as err:
+        except KeyError:
             print(entry)
             raise
 
