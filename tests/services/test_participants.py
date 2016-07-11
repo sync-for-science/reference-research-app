@@ -3,7 +3,7 @@ from sqlalchemy import orm
 import pytest
 
 from researchapp.models.providers import Practitioner, Organization, OAuthClient
-from researchapp.models import Participant
+from researchapp.models.participants import Participant
 from researchapp.services import participants
 
 
@@ -31,7 +31,9 @@ def test_store_authorization(session):
         'code': '12345',
     }
     oauth_client = OAuthClient()
-    organization = Organization(oauth_client=oauth_client,
+    organization = Organization(id=1,
+                                name='Example org',
+                                oauth_client=oauth_client,
                                 url='http://example.com/fhir/')
     practitioner = Practitioner(organization=organization)
 

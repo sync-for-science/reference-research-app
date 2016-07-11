@@ -5,14 +5,14 @@ from sqlalchemy import create_engine, orm
 import httpretty
 import pytest
 
-from researchapp.models import Base
+from researchapp.extensions import db
 from researchapp.services import fhir
 
 
 @pytest.fixture
 def session():
     engine = create_engine('sqlite:///:memory:')
-    Base.metadata.create_all(engine)
+    db.metadata.create_all(engine)
 
     Session = orm.sessionmaker(bind=engine)  # pylint: disable=invalid-name
 
