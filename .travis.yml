@@ -9,5 +9,5 @@ install:
 # command to run tests
 script:
   - py.test
-  - pylint researchapp --disable=R,C
+  - pylint researchapp --disable=R,C,fixme
   - pep8 researchapp
