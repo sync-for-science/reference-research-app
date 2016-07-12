@@ -11,6 +11,7 @@ from injector import inject
 
 from researchapp.models.participants import Participant
 from researchapp.models.resources import Resource
+from researchapp.services.logging import log
 
 
 S4S_RESOURCES = {
@@ -66,6 +67,7 @@ class ResourceService(object):
         """
         state = json.loads(authorization.fhirclient)
         fhir = client.FHIRClient(state=state)
+        fhir.server.session.hooks = dict(response=log)
         factory = ResourceFactory(participant, authorization.practitioner)
 
         try:

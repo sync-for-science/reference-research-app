@@ -5,7 +5,7 @@ import os
 import requests
 
 
-def log(response):
+def log(response, *args, **kwargs):
     """ Log the response from a FHIR query.
 
     Parameters
@@ -23,7 +23,7 @@ def log(response):
     requests.post(es_url, data=json.dumps(payload))
 
 
-def _clean(data):
+def _clean(loggable):
     """ Limits requests and responses to just a few fields we care about and
     makes sure that they're json-serializable.
 
@@ -33,13 +33,12 @@ def _clean(data):
         - method
         - url
     """
-    valid = ['body', '_content', 'headers', 'method', 'url']
-    data = {k: v for k, v in vars(data).items() if k in valid}
+    valid = ['body', 'headers', 'method', 'url']
+    data = {k: v for k, v in vars(loggable).items() if k in valid}
 
     data['headers'] = dict(data['headers'])
 
-    if '_content' in data:
-        data['body'] = data['_content'].decode('utf-8')
-        del data['_content']
+    if hasattr(loggable, 'text'):
+        data['body'] = loggable.text
 
     return data
