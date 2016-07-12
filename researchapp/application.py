@@ -6,14 +6,12 @@ import json
 import os
 
 from flask import Flask
-from flask_injector import FlaskInjector
-from injector import Injector
 import yaml
 
 import researchapp as app_root
 from researchapp.blueprints import all_blueprints
-from researchapp.extensions import db, configure
-from researchapp.services import authorize
+from researchapp.extensions import db, configure, injector
+from researchapp.services import authorize, resources
 
 APP_ROOT_FOLDER = os.path.abspath(os.path.dirname(app_root.__file__))
 TEMPLATE_FOLDER = os.path.join(APP_ROOT_FOLDER, 'templates')
@@ -88,9 +86,10 @@ def create_app(config_obj, no_sql=False):
     if not no_sql:
         db.init_app(app)
 
-    injector = Injector([configure,
-                         authorize.configure])
-    FlaskInjector(app=app, injector=injector)
+    injector.register(configure)
+    injector.register(authorize.configure)
+    injector.register(resources.configure)
+    injector.init_app(app)
 
     # Define extra jinja2 filters
     @app.template_filter('prettify_json')

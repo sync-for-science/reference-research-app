@@ -7,8 +7,12 @@ application.py.
 from flask_sqlalchemy import SQLAlchemy
 from injector import singleton
 
+from researchapp.injector import InjectorExtension
+
 
 db = SQLAlchemy()  # pylint: disable=invalid-name
+
+injector = InjectorExtension()  # pylint: disable=invalid-name
 
 
 def configure(binder):

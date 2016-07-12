@@ -10,7 +10,8 @@ from injector import inject
 from werkzeug.exceptions import Forbidden
 
 from researchapp.blueprints import share_my_data
-from researchapp.services import authorize
+from researchapp.services import authorize, resources
+from researchapp.models.participants import THE_ONLY_PARTICIPANT_ID
 
 
 @share_my_data.route('/')
@@ -32,20 +33,17 @@ def view_share_my_data():
 def view_consent(service):
     """ Consent page.
     """
-    data = service.display_consent(request.args['doctor'])
+    view_data = service.display_consent(request.args['doctor'])
 
-    return render_template('consent.jinja2', **data)
+    return render_template('consent.jinja2', **view_data)
 
 
 @share_my_data.route('/connected')
-def view_connected():
+@inject(service=resources.ResourceService)
+def view_connected(service):
     """ Show all connected providers.
     """
-    from researchapp.services.participants import participant_service
-    from researchapp.services.resources import resource_service
-
-    participant = participant_service().get_participant(1)
-    connections = resource_service().find_all_for_participant(participant)
+    connections = service.display_connections(THE_ONLY_PARTICIPANT_ID)
 
     return render_template('connected.jinja2', connections=connections)
 
@@ -60,7 +58,7 @@ def authorized(service):
     except authorize.FHIRUnauthorizedException:
         raise Forbidden()
 
-    return redirect(url_for('share_my_data.views.view_connected'))
+    return redirect(url_for('.view_connected'))
 
 
 @share_my_data.route('/fhir/<resource_type>')

@@ -3,7 +3,7 @@
 import json
 
 from fhirclient import client
-from flask import session
+from flask import session, url_for
 from flask_sqlalchemy import SQLAlchemy
 from injector import inject
 
@@ -13,7 +13,6 @@ from researchapp.models.participants import (
     Participant,
 )
 from researchapp.models.providers import Practitioner
-from researchapp.services import oauth
 
 
 class AuthorizeService(object):
@@ -34,7 +33,7 @@ class AuthorizeService(object):
             'app_id': practitioner.client_id,
             'app_secret': practitioner.client_secret,
             'api_base': practitioner.fhir_url,
-            'redirect_uri': oauth.redirect_uri(),
+            'redirect_uri': url_for('share_my_data.views.authorized', _external=True),
             'scope': practitioner.scope,
         }
         fhir = client.FHIRClient(settings=settings)
@@ -59,8 +58,6 @@ class AuthorizeService(object):
 
         try:
             state = session['fhirclient']
-            print(state)
-            print(callback_url)
             fhir = client.FHIRClient(state=state)
             fhir.handle_callback(callback_url)
         except client.FHIRUnauthorizedException:

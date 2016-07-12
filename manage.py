@@ -34,6 +34,7 @@ import sys
 from docopt import docopt
 
 from researchapp.application import create_app, get_config
+from researchapp.extensions import injector
 
 OPTIONS = docopt(__doc__) if __name__ == '__main__' else dict()
 
@@ -159,16 +160,15 @@ def devserver():  # pylint: disable=missing-docstring
 def fetch_participant_resources():
     """ For each participant/provider combo, download all their resources.
     """
-    from researchapp.extensions import db
-    from researchapp.services.participants import participant_service
-    from researchapp.services.resources import resource_service
+    from researchapp.models.participants import THE_ONLY_PARTICIPANT_ID
+    from researchapp.services.resources import ResourceService
 
     setup_logging('shell')
     app = create_app(parse_options())
     app.app_context().push()
 
-    participant = participant_service().get_participant(1)
-    resource_service().sync(participant)
+    service = injector.injector.get(ResourceService)
+    service.sync_participant(THE_ONLY_PARTICIPANT_ID)
 
 
 @command
