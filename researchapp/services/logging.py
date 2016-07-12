@@ -1,7 +1,7 @@
 """ Log stuff to ElasticSearch so we can look at it later. """
 import datetime
 import json
-import pyramid
+import os
 import requests
 
 
@@ -12,9 +12,7 @@ def log(response):
     ----------
     response : requests.models.Response
     """
-    registry = pyramid.threadlocal.get_current_registry()
-    settings = registry.settings
-    es_url = settings['es_url']
+    es_url = os.getenv('ES_URL')
 
     payload = {
         'request': _clean(response.request),
@@ -23,21 +21,6 @@ def log(response):
     }
 
     requests.post(es_url, data=json.dumps(payload))
-
-
-def includeme(config):
-    """ Overrides configuration settings with environment variables if they
-    are provided.
-
-    ES_URL : The ElasticSearch URL to post logs to.
-    """
-    import os
-
-    if 'ES_URL' not in os.environ:
-        return
-
-    settings = config.registry.settings
-    settings['es_url'] = os.environ['ES_URL']
 
 
 def _clean(data):

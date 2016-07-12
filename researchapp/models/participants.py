@@ -3,7 +3,6 @@
 Participants are the prototypical "users" of this application.
 """
 from sqlalchemy import (
-    Table,
     ForeignKey,
     Column,
     Integer,
@@ -11,18 +10,17 @@ from sqlalchemy import (
 )
 from sqlalchemy.orm import relationship
 
-from . import Base
+from researchapp.extensions import db
 
 
-PARTICIPANT_AUTHORIZATION = Table(
+PARTICIPANT_AUTHORIZATION = db.Table(
     'participant_authorization',
-    Base.metadata,
     Column('participant_id', ForeignKey('participant.id'), primary_key=True),
     Column('authorization_id', ForeignKey('authorization.id'), primary_key=True)
 )
 
 
-class Participant(Base):
+class Participant(db.Model):
     """ Participant """
     __tablename__ = 'participant'
     id = Column(Integer, primary_key=True)
@@ -33,12 +31,15 @@ class Participant(Base):
 
     @property
     def practitioners(self):
+        """ All the Practitioners for this patient.
+
+        Collapses all the authorizations into a list of unique Practitioners.
+        """
         practitioners = set()
         for authz in self.authorizations:
             practitioners.add(authz.practitioner)
 
         return practitioners
-
 
     def authorization(self, practitioner):
         """ We want the most recent authorization.
@@ -51,7 +52,7 @@ class Participant(Base):
             return None
 
 
-class Authorization(Base):
+class Authorization(db.Model):
     """ Authorization """
     __tablename__ = 'authorization'
     id = Column(Integer, primary_key=True)
@@ -67,5 +68,7 @@ class Authorization(Base):
     practitioner = relationship('Practitioner')
 
     def update(self, token):
+        """ Update this authorization when the token changes.
+        """
         self.access_token = token.get('access_token', self.access_token)
         self.refresh_token = token.get('refresh_token', self.refresh_token)

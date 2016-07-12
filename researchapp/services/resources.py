@@ -2,7 +2,7 @@
 """
 import json
 
-from researchapp.models import DBSession
+from researchapp.extensions import db
 from researchapp.models.resources import Resource
 from researchapp.services import fhir
 
@@ -63,7 +63,7 @@ class DbService(object):
     def _sync_practitioner(self, participant, practitioner):
         """ Sync just one practitioner.
         """
-        for ccds, endpoints in S4S_RESOURCES.items():
+        for endpoints in S4S_RESOURCES.values():
             for endpoint in endpoints:
                 try:
                     bundle = fhir.query(participant, practitioner, endpoint)
@@ -82,6 +82,7 @@ class DbService(object):
         resource = fhir.get_patient(participant, practitioner)
         if resource:
             self.save_resource(resource, participant, practitioner)
+        db.session.commit()
 
     def save_resource(self, entry, participant, practitioner):
         """ Save a resource to the database.
@@ -92,15 +93,15 @@ class DbService(object):
                                 fhir_resource_type=entry['resourceType'],
                                 participant=participant,
                                 practitioner=practitioner)
-            DBSession.add(resource)
-        except KeyError as err:
+            db.session.add(resource)
+        except KeyError:
             print(entry)
             raise
 
     def find_by_participant(self, participant):
         """ Get all the resources belonging to a single participant.
         """
-        resources = DBSession.query(Resource).\
+        resources = db.session.query(Resource).\
             filter_by(participant=participant).\
             group_by(Resource.fhir_id).\
             all()
@@ -113,7 +114,7 @@ class DbService(object):
         found = []
 
         for practitioner in participant.practitioners:
-            resources = DBSession.query(Resource).\
+            resources = db.session.query(Resource).\
                 filter_by(participant=participant).\
                 filter_by(practitioner=practitioner).\
                 group_by(Resource.fhir_id).\

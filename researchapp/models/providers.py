@@ -6,10 +6,11 @@ from sqlalchemy import (
     String,
     orm,
 )
-from . import Base
+
+from researchapp.extensions import db
 
 
-class Practitioner(Base):
+class Practitioner(db.Model):
     """ A Practitioner.
     """
     __tablename__ = 'practitioner'
@@ -36,7 +37,7 @@ class Practitioner(Base):
         return self.organization.oauth_client.scope
 
 
-class OAuthClient(Base):
+class OAuthClient(db.Model):
     """ An oAuth Client.
     """
     __tablename__ = 'oauth_client'
@@ -49,7 +50,7 @@ class OAuthClient(Base):
     organization = orm.relationship('Organization')
 
 
-class Organization(Base):
+class Organization(db.Model):
     """ An Organization.
     """
     __tablename__ = 'organization'

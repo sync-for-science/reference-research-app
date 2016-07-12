@@ -2,6 +2,8 @@
 
 Resources are FHIR resources that we've downloaded and stored.
 """
+import datetime
+
 from sqlalchemy import (
     ForeignKey,
     Column,
@@ -10,12 +12,11 @@ from sqlalchemy import (
     DateTime,
 )
 from sqlalchemy.orm import relationship
-import datetime
 
-from . import Base
+from researchapp.extensions import db
 
 
-class Resource(Base):
+class Resource(db.Model):
     """ Resource """
     __tablename__ = 'resource'
     id = Column(Integer, primary_key=True)

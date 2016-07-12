@@ -1,4 +1,4 @@
 #!/bin/sh
 
-initialize_db development.ini
+./manage.py initialize_db
 supervisorctl start after:*
