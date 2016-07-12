@@ -11,7 +11,7 @@ import yaml
 import researchapp as app_root
 from researchapp.blueprints import all_blueprints
 from researchapp.extensions import db, configure, injector
-from researchapp.services import authorize, resources
+from researchapp.services import authorize, providers, resources
 
 APP_ROOT_FOLDER = os.path.abspath(os.path.dirname(app_root.__file__))
 TEMPLATE_FOLDER = os.path.join(APP_ROOT_FOLDER, 'templates')
@@ -88,6 +88,7 @@ def create_app(config_obj, no_sql=False):
 
     injector.register(configure)
     injector.register(authorize.configure)
+    injector.register(providers.configure)
     injector.register(resources.configure)
     injector.init_app(app)
 

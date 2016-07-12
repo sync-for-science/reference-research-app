@@ -1,6 +1,5 @@
 """ Some views"""
 from flask import (
-    jsonify,
     redirect,
     render_template,
     request,
@@ -59,30 +58,3 @@ def authorized(service):
         raise Forbidden()
 
     return redirect(url_for('.view_connected'))
-
-
-@share_my_data.route('/fhir/<resource_type>')
-def fhir_resource(resource_type):
-    """ FHIR resource endpoint.
-    """
-    from researchapp.services.providers import provider_service
-
-    if resource_type != 'Practitioner':
-        raise Forbidden()
-
-    def to_fhir(resource):  # pylint: disable=missing-docstring
-        return {
-            'resource': {
-                'resourceType': 'Practitioner',
-                'name': resource.name,
-            }
-        }
-
-    practitioners = provider_service().filter_providers(**request.args)
-    entries = [to_fhir(practitioner) for practitioner in practitioners]
-
-    return jsonify({
-        'resourceType': 'Bundle',
-        'total': len(entries),
-        'entries': entries,
-    })
