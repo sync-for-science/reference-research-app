@@ -1,9 +1,9 @@
 """ Authorize Service module.
 """
 import json
+import subprocess
 
 from fhirclient import client
-from flask import session, url_for
 from flask_sqlalchemy import SQLAlchemy
 from injector import inject
 
@@ -22,7 +22,7 @@ class AuthorizeService(object):
     def __init__(self, db):
         self._db = db
 
-    def display_consent(self, practitioner_name):
+    def display_consent(self, practitioner_name, redirect_uri, session):
         """ Everything we need to display a consent page.
         """
         practitioner = self._db.session.query(Practitioner).\
@@ -33,7 +33,7 @@ class AuthorizeService(object):
             'app_id': practitioner.client_id,
             'app_secret': practitioner.client_secret,
             'api_base': practitioner.fhir_url,
-            'redirect_uri': url_for('share_my_data.views.authorized', _external=True),
+            'redirect_uri': redirect_uri,
             'scope': practitioner.scope,
         }
         fhir = client.FHIRClient(settings=settings)
@@ -48,7 +48,7 @@ class AuthorizeService(object):
             'authorize_url': authorize_url,
         }
 
-    def register_authorization(self, callback_url):
+    def register_authorization(self, callback_url, session):
         """ Validate and store a completed authorizations.
         """
         participant = self._db.session.query(Participant).\
@@ -69,6 +69,9 @@ class AuthorizeService(object):
 
         self._db.session.add(authorization)
         self._db.session.commit()
+
+        # TODO: Something more robust than this to kick-start resource syncing
+        subprocess.Popen(['./manage.py', 'fetch_participant_resources'])
 
 
 class FHIRUnauthorizedException(Exception):

@@ -4,5 +4,8 @@ ENV
 *.egg-info
 node_modules
 *.sqlite3
-data
 .cache
+
+# py.test coverage
+.coverage*
+researchapp/static/coverage

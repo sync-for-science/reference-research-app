@@ -1,7 +1,9 @@
 ## The following requirements were added by pip freeze:
 astroid==1.4.7
 click==6.6
+coverage==4.1
 docopt==0.6.2
+git+git://github.com/smart-on-fhir/client-py.git#egg=fhirclient
 Flask==0.11.1
 Flask-Injector==0.7.1
 Flask-SQLAlchemy==2.1
@@ -18,6 +20,8 @@ pep8==1.7.0
 py==1.4.31
 pylint==1.6.1
 pytest==2.9.2
+pytest-cov==2.3.0
+python-frontmatter==0.2.1
 PyYAML==3.11
 requests==2.10.0
 six==1.10.0

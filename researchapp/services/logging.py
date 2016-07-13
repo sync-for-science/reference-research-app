@@ -5,7 +5,7 @@ import os
 import requests
 
 
-def log(response, *args, **kwargs):
+def log(response, *args, **kwargs):  # pylint: disable=unused-argument
     """ Log the response from a FHIR query.
 
     Parameters

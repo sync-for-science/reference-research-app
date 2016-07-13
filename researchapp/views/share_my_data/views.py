@@ -3,6 +3,7 @@ from flask import (
     redirect,
     render_template,
     request,
+    session,
     url_for,
 )
 from injector import inject
@@ -32,7 +33,9 @@ def view_share_my_data():
 def view_consent(service):
     """ Consent page.
     """
-    view_data = service.display_consent(request.args['doctor'])
+    view_data = service.display_consent(request.args['doctor'],
+                                        url_for('.authorized', _external=True),
+                                        session)
 
     return render_template('consent.jinja2', **view_data)
 
@@ -53,7 +56,7 @@ def authorized(service):
     """ Handle authorized callback.
     """
     try:
-        service.register_authorization(request.url)
+        service.register_authorization(request.url, session)
     except authorize.FHIRUnauthorizedException:
         raise Forbidden()
 
