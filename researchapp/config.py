@@ -18,4 +18,4 @@ class Testing(Config):
 
 class Production(Config):
     DEBUG = False
-    SECRET_KEY = None  # To be overwritten by a YAML file.
+    SECRET_KEY = '7e3adcac90421842f13777fb3995713d'

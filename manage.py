@@ -5,6 +5,8 @@ Command details:
     devserver                       Run the application using the Flask
                                     Development Server. Auto-reloads files
                                     when they change.
+    wsgi_app                        Return the application so that an external
+                                    server can handle the details.
     fetch_participant_resources     For each participant/provider combo,
                                     download all their resources.
     initialize_db                   Initialize database tables, create a
@@ -12,6 +14,7 @@ Command details:
 
 Usage:
     manage.py devserver [-p NUM] [-l DIR] [--config_prod]
+    manage.py wsgi_app [-l DIR] [--config_prod]
     manage.py fetch_participant_resources
     manage.py initialize_db
 
@@ -36,7 +39,7 @@ from docopt import docopt
 from researchapp.application import create_app, get_config
 from researchapp.extensions import injector
 
-OPTIONS = docopt(__doc__) if __name__ == '__main__' else dict()
+OPTIONS = docopt(__doc__)
 
 
 class CustomFormatter(logging.Formatter):  # pylint: disable=missing-docstring
@@ -154,6 +157,13 @@ def devserver():  # pylint: disable=missing-docstring
     setup_logging('devserver')
     app = create_app(parse_options())
     app.run(host='0.0.0.0', port=int(OPTIONS['--port']))
+
+
+@command
+def wsgi_app():  # pylint: disable=missing-docstring
+    setup_logging('wsgi_app')
+    app = create_app(parse_options())
+    return app
 
 
 @command
