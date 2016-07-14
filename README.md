@@ -13,3 +13,18 @@ pip install -r requirements.txt
 ```
 ./manage.py devserver
 ```
+
+## Running the testso
+
+To test the reference research app, use py.test.
+
+```
+pip install -e . # Install "researchapp" so that the tests can find it
+py.test
+```
+
+To see the test coverage, generate a coverage report and navigate to /static/coverage/index.html.
+
+```
+py.test --cov=researchapp --cov-report html
+```

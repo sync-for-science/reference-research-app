@@ -2,7 +2,8 @@
 import datetime
 import json
 import os
-import requests
+
+import grequests
 
 
 def log(response, *args, **kwargs):  # pylint: disable=unused-argument
@@ -20,7 +21,9 @@ def log(response, *args, **kwargs):  # pylint: disable=unused-argument
         'now': datetime.datetime.now().isoformat(),
     }
 
-    requests.post(es_url, data=json.dumps(payload))
+    # Use the asynchronous grequests library because we don't need a response.
+    req = grequests.post(es_url, data=json.dumps(payload))
+    grequests.send(req)
 
 
 def _clean(loggable):
