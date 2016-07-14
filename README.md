@@ -14,7 +14,7 @@ pip install -r requirements.txt
 ./manage.py devserver
 ```
 
-## Running the testso
+## Running the tests
 
 To test the reference research app, use py.test.
 
