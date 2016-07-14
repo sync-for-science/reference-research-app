@@ -1,10 +1,17 @@
 """ Resources Service
 """
 import json
+import logging
 
-from researchapp.extensions import db
+from fhirclient import client
+from fhirclient.models.fhirabstractbase import FHIRValidationError
+from fhirclient.models.fhirelementfactory import FHIRElementFactory
+from flask_sqlalchemy import SQLAlchemy
+from injector import inject
+
+from researchapp.models.participants import Participant
 from researchapp.models.resources import Resource
-from researchapp.services import fhir
+from researchapp.services.logging import log
 
 
 S4S_RESOURCES = {
@@ -39,90 +46,103 @@ S4S_RESOURCES = {
 }
 
 
-def resource_service(which='db'):
-    """ factory method """
-    if which == 'db':
-        return DbService()
-
-
-class DbService(object):
-    """ Database backed ParticipantService
+class ResourceService(object):
+    """ The service.
     """
+    @inject(db=SQLAlchemy)
+    def __init__(self, db):
+        self._db = db
 
-    def __init__(self):
-        pass
-
-    def sync(self, participant):
-        """ Sync, FOR SCIENCE!
+    def sync_participant(self, participant_id):
+        """ Fetch all the resources for a given Participant.
         """
+        participant = self._db.session.query(Participant).\
+            get(participant_id)
+
         for authorization in participant.authorizations:
-            practitioner = authorization.practitioner
+            self.sync_authorization(participant, authorization)
 
-            self._sync_practitioner(participant, practitioner)
-
-    def _sync_practitioner(self, participant, practitioner):
-        """ Sync just one practitioner.
+    def sync_authorization(self, participant, authorization):
+        """ Fetch all the resources for a given authorization.
         """
-        for endpoints in S4S_RESOURCES.values():
-            for endpoint in endpoints:
-                try:
-                    bundle = fhir.query(participant, practitioner, endpoint)
-                except AssertionError as err:
-                    print(err, endpoint)
-                    continue
+        state = json.loads(authorization.fhirclient)
+        fhir = client.FHIRClient(state=state)
+        fhir.server.session.hooks = dict(response=log)
+        factory = ResourceFactory(participant, authorization.practitioner)
 
-                if not bundle:
-                    continue
-
-                for entry in bundle.get('entry', []):
-                    self.save_resource(entry['resource'],
-                                       participant,
-                                       practitioner)
-
-        resource = fhir.get_patient(participant, practitioner)
-        if resource:
-            self.save_resource(resource, participant, practitioner)
-        db.session.commit()
-
-    def save_resource(self, entry, participant, practitioner):
-        """ Save a resource to the database.
-        """
         try:
-            resource = Resource(entry=json.dumps(entry),
-                                fhir_id=entry.get('id', None),
-                                fhir_resource_type=entry['resourceType'],
-                                participant=participant,
-                                practitioner=practitioner)
-            db.session.add(resource)
-        except KeyError:
-            print(entry)
-            raise
+            patient = fhir.patient
+            resource = factory.from_fhirclient_model(patient)
+            self._db.session.add(resource)
 
-    def find_by_participant(self, participant):
-        """ Get all the resources belonging to a single participant.
+            for ccds, endpoints in S4S_RESOURCES.items():
+                logging.info('Begin import: %s', ccds)
+                for endpoint in endpoints:
+                    path = endpoint.format(patientId=patient.id)
+                    bundle = fhir.server.request_json(path)
+                    self.sync_bundle(bundle, factory)
+        finally:
+            state = json.dumps(fhir.state)
+            authorization.fhirclient = state
+            self._db.session.add(authorization)
+            self._db.session.commit()
+
+    def sync_bundle(self, bundle, factory):
+        """ Save all the resources for a single bundle.
         """
-        resources = db.session.query(Resource).\
-            filter_by(participant=participant).\
-            group_by(Resource.fhir_id).\
-            all()
+        for entry in bundle.get('entry', []):
+            try:
+                resource = factory.from_dictionary(entry.get('resource'))
+                self._db.session.add(resource)
+            except FHIRValidationError:
+                continue
 
-        return resources
-
-    def find_all_for_participant(self, participant):
-        """ Get all the authorizations and resources for a participant.
+    def display_connections(self, participant_id):
+        """ Show all the connections stored for a participant.
         """
+        participant = self._db.session.query(Participant).\
+            get(participant_id)
         found = []
 
         for practitioner in participant.practitioners:
-            resources = db.session.query(Resource).\
+            resources = self._db.session.query(Resource).\
                 filter_by(participant=participant).\
                 filter_by(practitioner=practitioner).\
                 group_by(Resource.fhir_id).\
                 all()
-
             found.append({
                 'resources': resources,
                 'practitioner': practitioner,
             })
 
         return found
+
+
+class ResourceFactory(object):
+    """ Easy way to create Resources.
+    """
+    def __init__(self, participant, practitioner):
+        self.participant = participant
+        self.practitioner = practitioner
+
+    def from_fhirclient_model(self, resource):
+        """ Converts a fhirclient model to a Resource.
+        """
+        return Resource(entry=json.dumps(resource.as_json()),
+                        fhir_id=resource.id,
+                        fhir_resource_type=resource.resource_name,
+                        participant=self.participant,
+                        practitioner=self.practitioner)
+
+    def from_dictionary(self, raw):
+        """ Converts a dictionary to a Resource.
+        """
+        resource = FHIRElementFactory.instantiate(raw['resourceType'],
+                                                  raw)
+        return self.from_fhirclient_model(resource)
+
+
+def configure(binder):
+    """ Configure this module for the Injector.
+    """
+    binder.bind(ResourceService)

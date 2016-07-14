@@ -31,6 +31,7 @@ def _factory(partial_module_string, url_prefix):
 
 
 share_my_data = _factory('share_my_data.views', '')
+fhir = _factory('fhir.views', '/fhir')
 
 
-all_blueprints = (share_my_data,)
+all_blueprints = (share_my_data, fhir,)

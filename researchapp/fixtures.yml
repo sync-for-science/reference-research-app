@@ -30,14 +30,14 @@ class: !!python/name:researchapp.models.providers.OAuthClient
 args:
   client_id: research-app
   client_secret: demo-secret-s4s
-  scope: launch/patient patient/*.read offline_access
+  scope: patient/*.read offline_access
   organization_id: smart
 ---
 class: !!python/name:researchapp.models.providers.OAuthClient
 args:
   client_id: 74efd7ee-88d0-47ee-acbe-43775da0922f
   client_secret: O2DekW7LTkyz9vcupzLy22JjMje0+ZftF3EPnvS3GVlaEe6ZOir2bhNdlp4w9yIT6r1THw1JSsZa0Qf9jkgIlw==
-  scope: launch/patient patient/*.read offline_access
+  scope: patient/*.read offline_access
   organization_id: allscripts
 ---
 class: !!python/name:researchapp.models.providers.OAuthClient
@@ -51,7 +51,7 @@ class: !!python/name:researchapp.models.providers.OAuthClient
 args:
   client_id: ad3fe986-cbad-4fcc-a487-3e9ee1ef3a4d
   client_secret: argonaut
-  scope: launch/patient patient/*.read offline_access
+  scope: patient/*.read offline_access
   organization_id: epic
 ---
 class: !!python/name:researchapp.models.providers.Practitioner

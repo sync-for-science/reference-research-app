@@ -18,6 +18,7 @@ PARTICIPANT_AUTHORIZATION = db.Table(
     Column('participant_id', ForeignKey('participant.id'), primary_key=True),
     Column('authorization_id', ForeignKey('authorization.id'), primary_key=True)
 )
+THE_ONLY_PARTICIPANT_ID = 1
 
 
 class Participant(db.Model):
@@ -56,19 +57,8 @@ class Authorization(db.Model):
     """ Authorization """
     __tablename__ = 'authorization'
     id = Column(Integer, primary_key=True)
-    scope = Column(String)
-    access_token = Column(String)
-    token_type = Column(String)
-    client_id = Column(String)
-    patient = Column(String)
-    refresh_token = Column(String)
+    fhirclient = Column(String)
 
     # many to one Authorization -> Practitioner
     practitioner_id = Column(Integer, ForeignKey('practitioner.id'))
     practitioner = relationship('Practitioner')
-
-    def update(self, token):
-        """ Update this authorization when the token changes.
-        """
-        self.access_token = token.get('access_token', self.access_token)
-        self.refresh_token = token.get('refresh_token', self.refresh_token)
