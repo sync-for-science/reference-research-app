@@ -1,19 +1,19 @@
 {% extends "base.jinja2" %}
 
-{% block jumbotron %}
-<h1>Share records from... ?</h1>
-<p></p>
-{% endblock %}
-
 {% block body %}
 <!-- Example row of columns -->
 <div class="row">
-    <form class="form-inline" action="/consent" method="get">
-        <div class="form-group">
-            <label for="doctor">Your doctor's name</label>
-            <select class="form-control" name="doctor" id="doctor"></select>
-        </div>
-        <button class="btn btn-default" type="submit">Find my doctor</button>
-    </form>
+    <div class="col-md-12">
+        <h1>Share records from... ?</h1>
+        <hr>
+
+        <form class="form-inline" action="/consent" method="get">
+            <div class="form-group">
+                <label for="doctor">Your doctor's name</label>
+                <select class="form-control" name="doctor" id="doctor"></select>
+            </div>
+            <button class="btn btn-default" type="submit">Find my doctor</button>
+        </form>
+    </div>
 </div>
 {% endblock %}

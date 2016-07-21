@@ -1,5 +1,6 @@
 """ Some views"""
 from flask import (
+    flash,
     redirect,
     render_template,
     request,
@@ -7,6 +8,7 @@ from flask import (
     url_for,
 )
 from injector import inject
+from sqlalchemy.orm.exc import NoResultFound
 from werkzeug.exceptions import Forbidden
 
 from researchapp.blueprints import share_my_data
@@ -33,9 +35,15 @@ def view_share_my_data():
 def view_consent(service):
     """ Consent page.
     """
-    view_data = service.display_consent(request.args['doctor'],
-                                        url_for('.authorized', _external=True),
-                                        session)
+    try:
+        view_data = service.display_consent(
+            request.args['doctor'],
+            url_for('.authorized', _external=True),
+            session,
+        )
+    except NoResultFound:
+        flash('No results found.')
+        return redirect(url_for('.view_share_my_data'))
 
     return render_template('consent.jinja2', **view_data)
 

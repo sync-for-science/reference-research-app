@@ -26,7 +26,10 @@ def fhir_resource(service, resource_type):
             }
         }
 
-    practitioners = service.filter_providers(**request.args)
+    query = {}
+    if 'name' in request.args:
+        query['name'] = request.args['name']
+    practitioners = service.filter_providers(**query)
     entries = [to_fhir(practitioner) for practitioner in practitioners]
 
     return jsonify({

@@ -32,14 +32,14 @@
             </div>
         </nav>
 
-        <!-- Main jumbotron for a primary marketing message or call to action -->
-        <div class="jumbotron">
-            <div class="container">
-                {% block jumbotron %}{% endblock %}
-            </div>
-        </div>
-
         <div class="container">
+
+            {% with messages = get_flashed_messages() %}
+                {% for message in messages %}
+                    <div class="alert alert-danger">{{ message }}</div>
+                {% endfor %}
+            {% endwith %}
+
             {% block body %}Hello world!{% endblock %}
 
             <hr>
