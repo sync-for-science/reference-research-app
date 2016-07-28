@@ -33,6 +33,7 @@ def _clean(loggable):
     Fields:
         - body
         - headers
+        - json
         - method
         - url
     """
@@ -43,5 +44,10 @@ def _clean(loggable):
 
     if hasattr(loggable, 'text'):
         data['body'] = loggable.text
+
+    try:
+        data['json'] = loggable.json()
+    except:  # pylint: disable=bare-except
+        pass
 
     return data
