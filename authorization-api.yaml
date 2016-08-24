@@ -141,6 +141,9 @@ definitions:
       patient:
         type: string
         description: The patient id on the authorized FHIR server.
+      fhir_url:
+        type: string
+        description: The FHIR base URL where resources can be retrieved.
   Authorization:
     type: object
     properties:
