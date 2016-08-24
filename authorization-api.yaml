@@ -1,0 +1,171 @@
+swagger: '2.0'
+info:
+  title: S4S Authorization
+  version: "1.0.0"
+# will be prefixed to all paths
+basePath: /
+produces:
+  - application/json
+paths:
+  /providers:
+    get:
+      summary: Available providers
+      description: |
+        The Providers endpoint returns a list of providers registered with the system.
+      tags:
+        - Providers
+      responses:
+        200:
+          description: An array of Providers
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Provider'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /providers/{provider_id}/begin-authorization:
+    post:
+      summary: Begin authorizing a Provider
+      tags:
+        - Providers
+      parameters:
+        - name: provider_id
+          in: path
+          description: The Provider id
+          required: true
+          type: integer
+        - name: participant_id
+          in: formData
+          description: The Participant id
+          required: true
+          type: integer
+      responses:
+        302:
+          description: A redirect to begin the authorization process.
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /providers/{provider_id}/store-authorization:
+    post:
+      summary: Store an authorization
+      description: |
+        Handles Step 3 of the SMART authorization guide. Converts the
+        authorization code into an access token, and then stores that token.
+      tags:
+        - Providers
+      parameters:
+        - name: provider_id
+          in: path
+          description: The Provider id
+          required: true
+          type: integer
+        - name: participant_id
+          in: formData
+          description: The Participant id
+          required: true
+          type: integer
+        - name: authorization_code
+          in: formData
+          description: Code that the app received from the authorization server
+          required: true
+          type: string
+      responses:
+        200:
+          description: Success
+          schema:
+            $ref: '#/definitions/Authorization'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /participant/{participant_id}/authorizations:
+    get:
+      summary: List authorizations attached to a Participant
+      tags:
+        - Participants
+      parameters:
+        - name: participant_id
+          in: path
+          description: The Participant id
+          required: true
+          type: integer
+      responses:
+        200:
+          description: An array of Providers
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Authorization'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /participant/{participant_id}/authorizations/{authorization_id}/token:
+    get:
+      summary: Get an access token
+      description: |
+        API will determine if it should return the most recent token or
+        generate a new one.
+      tags:
+        - Participants
+      parameters:
+        - name: participant_id
+          in: path
+          description: The Participant id
+          required: true
+          type: integer
+        - name: authorization_id
+          in: path
+          description: The Authorization id
+          required: true
+          type: integer
+      responses:
+        200:
+          description: Success
+          schema:
+            $ref: '#/definitions/AccessToken'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+definitions:
+  AccessToken:
+    type: object
+    properties:
+      access_token:
+        type: string
+        description: The access token issued by the authorization server
+      patient:
+        type: string
+        description: The patient id on the authorized FHIR server.
+  Authorization:
+    type: object
+    properties:
+      id:
+        type: integer
+        description: The internal Authorization id
+      name:
+        type: string
+        description: The Provider's name
+  Provider:
+    type: object
+    properties:
+      id:
+        type: integer
+        description: The internal Provider id
+      name:
+        type: string
+        description: The Provider's name
+  Error:
+    type: object
+    properties:
+      code:
+        type: integer
+        format: int32
+      message:
+        type: string
+      fields:
+        type: string
