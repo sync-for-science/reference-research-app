@@ -1,0 +1,85 @@
+swagger: '2.0'
+info:
+  title: S4S Resource Synchronizer API
+  version: "1.0.0"
+# will be prefixed to all paths
+basePath: /
+produces:
+  - application/json
+paths:
+  /participants/{participant_id}/authorizations/{provider_id}:
+    post:
+      summary: Store an authorization
+      parameters:
+        - name: participant_id
+          description: The Participant id
+          in: path
+          required: true
+          type: string
+        - name: provider_id
+          description: The Provider id
+          in: path
+          required: true
+          type: string
+        - name: code
+          description: The OAuth authorization code
+          in: formData
+          required: true
+          type: string
+      responses:
+        200:
+          description: Success
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /participants/{participant_id}/authorizations:
+    get:
+      summary: Get all the authorizations for a Participant
+      parameters:
+        - name: participant_id
+          description: The Participant id
+          in: path
+          required: true
+          type: string
+      responses:
+        200:
+          description: An array of Authorizations
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Authorization'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+definitions:
+  Authorization:
+    type: object
+    properties:
+      status:
+        type: string
+        description: expired | working
+      provider:
+        type: string
+        description: The Provider name
+      resources_endpoint:
+        type: string
+        description: FHIR URL?
+      counts:
+        type: object
+        description: ...
+        properties:
+          ResourceType:
+            type: integer
+            description: One or more resource types and their counts.
+  Error:
+    type: object
+    properties:
+      code:
+        type: integer
+        format: int32
+      message:
+        type: string
+      fields:
+        type: string
