@@ -1,15 +1,35 @@
 swagger: '2.0'
 info:
-  title: S4S Resource Synchronizer API
+  title: S4S Research App API
+  description: |
+    This API describes the endpoints available to any clients attempting to use
+    the Sync For Science Research App API.
   version: "1.0.0"
 # will be prefixed to all paths
 basePath: /
 produces:
   - application/json
 paths:
+  /participants:
+    post:
+      summary: Create a new participant
+      tags:
+        - participant
+      parameters:
+      responses:
+        200:
+          description: Success
+          schema:
+            $ref: '#/definitions/Participant'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
   /participants/{participant_id}/authorizations/{provider_id}:
     post:
       summary: Store an authorization
+      tags:
+        - participant
       parameters:
         - name: participant_id
           description: The Participant id
@@ -29,6 +49,8 @@ paths:
       responses:
         200:
           description: Success
+          schema:
+            $ref: '#/definitions/Authorization'
         default:
           description: Unexpected error
           schema:
@@ -36,6 +58,8 @@ paths:
   /participants/{participant_id}/authorizations:
     get:
       summary: Get all the authorizations for a Participant
+      tags:
+        - participant
       parameters:
         - name: participant_id
           description: The Participant id
@@ -73,6 +97,12 @@ definitions:
           ResourceType:
             type: integer
             description: One or more resource types and their counts.
+  Participant:
+    type: object
+    properties:
+      id:
+        type: string
+        description: a participant id
   Error:
     type: object
     properties:
