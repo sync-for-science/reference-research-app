@@ -81,13 +81,6 @@ paths:
           in: path
           required: true
           type: string
-        - name: include_resources
-          description: |
-            Whether or not to include the optional "resources" property in
-            the response.
-          in: query
-          required: false
-          type: boolean
       responses:
         200:
           description: An array of Authorizations
@@ -95,6 +88,31 @@ paths:
             type: array
             items:
               $ref: '#/definitions/Authorization'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /participants/{participant_id}/authorizations/{provider_id}/$everything:
+    get:
+      summary: Get all the Resources for a Participant for a given provider
+      tags:
+        - participant
+      parameters:
+        - name: participant_id
+          description: The Participant id
+          in: path
+          required: true
+          type: string
+        - name: provider_id
+          description: The Provider id
+          in: path
+          required: true
+          type: string
+      responses:
+        200:
+          description: A FHIR-like "bundle" containing resources.
+          schema:
+            $ref: '#/definitions/Bundle'
         default:
           description: Unexpected error
           schema:
@@ -124,9 +142,17 @@ definitions:
           ResourceType:
             type: integer
             description: One or more resource types and their counts.
-      resources:
+  Bundle:
+    type: object
+    properties:
+      resourceType:
+        type: string
+        default: Bundle
+      type:
+        type: string
+        default: searchset
+      entry:
         type: array
-        description: ...
         items:
           $ref: '#/definitions/Resource'
   Participant:
