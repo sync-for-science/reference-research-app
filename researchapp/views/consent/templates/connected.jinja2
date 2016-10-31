@@ -1,0 +1,30 @@
+{% extends "base.jinja2" %}
+
+{% block body %}
+<h1>We're connected to your medical records from:</h1>
+<hr>
+
+<div class="row">
+    {% for authorization in authorizations %}
+    <div class="col-md-4">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                {{ authorization.provider }}
+                -
+                <span class="text-muted">{{ authorization.status }}</span>
+            </div>
+            <div class="panel-body">
+                <ul>
+                    {% for resource, count in authorization.counts.items() %}
+                    <li>
+                        {{ count }}
+                        <a>{{ resource }}</a>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

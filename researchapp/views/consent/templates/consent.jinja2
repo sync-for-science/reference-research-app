@@ -3,10 +3,10 @@
 {% block body %}
 <div class="row">
     <div class="col-md-12">
-        <h1>Found {{ practitioner }}</h1>
+        <h1>Found {{ provider.name }}</h1>
         <hr>
 
-        <a href="{{ authorize_url }}"
+        <a href="{{ url_for('.authorize') }}"
             class="btn btn-primary btn-lg"
             >Share my electronic health records &raquo;</a>
 

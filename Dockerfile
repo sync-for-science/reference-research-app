@@ -25,5 +25,6 @@ COPY . /usr/src/app
 # Configure the app
 RUN pip install -e .
 ENV ES_URL "https://search-s4s-logs-xsjsafiwd7vkpiucmjqmdjkp7y.us-west-2.es.amazonaws.com/reference-research-app/log/"
+ENV FLASK_APP "/usr/src/app/app.py"
 
-CMD supervisord -c supervisord.conf
+CMD uwsgi uwsgi.ini
