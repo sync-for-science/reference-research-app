@@ -26,5 +26,7 @@ COPY . /usr/src/app
 RUN pip install -e .
 ENV ES_URL "https://search-s4s-logs-xsjsafiwd7vkpiucmjqmdjkp7y.us-west-2.es.amazonaws.com/reference-research-app/log/"
 ENV FLASK_APP "/usr/src/app/app.py"
+#ENV SYNCHRONIZER_HOST "http://tests.dev.syncfor.science:9005"
+ENV SYNCHRONIZER_HOST "https://sync-api.demo.syncfor.science"
 
 CMD uwsgi uwsgi.ini

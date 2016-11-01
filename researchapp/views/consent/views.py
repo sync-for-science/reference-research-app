@@ -10,7 +10,10 @@ from flask import (
 )
 import requests
 
+from researchapp.extensions import sync
+
 BP = Blueprint('consent', __name__, template_folder='templates')
+PARTICIPANT = 1
 PROVIDER = {
     'client-id': 'api-test',
     'id': 1,
@@ -43,7 +46,7 @@ def consent():
 def authorize():
     ''' Start the OAuth process.
     '''
-    return redirect('http://tests.dev.syncfor.science:9005/providers/1/launch')
+    return redirect(sync.get_provider_launch_url(PROVIDER['id']))
 
 
 @BP.route('/authorized')
@@ -53,7 +56,7 @@ def authorized_callback():
     params = {
         'redirect_uri': request.url,
     }
-    requests.post('http://tests.dev.syncfor.science:9005/participants/1/authorizations/1', data=params)
+    sync.create_authorization(PROVIDER['id'], PARTICIPANT, request.url)
 
     return redirect(url_for('.connected'))
 
@@ -62,12 +65,12 @@ def authorized_callback():
 def connected():
     ''' Show all connected providers.
     '''
-    resp = requests.get('http://tests.dev.syncfor.science:9005/participants/1/authorizations')
-    return render_template('connected.jinja2', authorizations=resp.json())
+    authorizations = sync.list_authorizations(PARTICIPANT)
+    return render_template('connected.jinja2', authorizations=authorizations)
 
 
 @BP.route('/api/providers')
 def api_providers():
     ''' List providers.
     '''
-    return jsonify([PROVIDER])
+    return jsonify(sync.list_providers())
