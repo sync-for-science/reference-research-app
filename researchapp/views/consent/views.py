@@ -8,7 +8,6 @@ from flask import (
     request,
     url_for,
 )
-import requests
 
 from researchapp.extensions import sync
 
@@ -53,9 +52,6 @@ def authorize():
 def authorized_callback():
     ''' Hand off the OAuth process.
     '''
-    params = {
-        'redirect_uri': request.url,
-    }
     sync.create_authorization(PROVIDER['id'], PARTICIPANT, request.url)
 
     return redirect(url_for('.connected'))
