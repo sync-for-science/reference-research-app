@@ -65,7 +65,7 @@ def authorized_callback():
         sync.create_authorization(provider['id'], PARTICIPANT, request.url)
 
         return redirect(url_for('.connected'))
-    except KeyError as err:
+    except KeyError:
         return render_template('invalid_provider.jinja2')
 
 

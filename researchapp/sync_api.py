@@ -1,7 +1,5 @@
 ''' Library for interfacing with the "synchronizer".
 '''
-from json.decoder import JSONDecodeError
-
 import requests
 
 
@@ -48,10 +46,7 @@ class SyncExtension(object):
         '''
         path = '/participants/{}/authorizations'.format(participant_id)
         resp = self.session.get(self.host + path)
-        try:
-            return resp.json()
-        except JSONDecodeError:
-            raise
+        return resp.json()
 
     def list_everything(self, participant_id, provider_id):
         ''' Get all the Resources for a Participant for a given provider.

@@ -7,7 +7,6 @@ from flask import Flask
 
 # Create and configured application
 app = Flask(__name__)
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SYNCHRONIZER_HOST'] = os.getenv('SYNCHRONIZER_HOST')
 app.secret_key = os.getenv('FLASK_SECRET_KEY')
 
@@ -24,7 +23,6 @@ def create_app():
     app.register_blueprint(consent_blueprint)
 
     # Init extensions
-    extensions.db.init_app(app)
     extensions.sync.init_app(app)
 
     return app
