@@ -9,6 +9,7 @@ from flask import Flask
 app = Flask(__name__)
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SYNCHRONIZER_HOST'] = os.getenv('SYNCHRONIZER_HOST')
+app.secret_key = os.getenv('FLASK_SECRET_KEY')
 
 
 def create_app():

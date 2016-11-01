@@ -6,6 +6,7 @@ from flask import (
     redirect,
     render_template,
     request,
+    session,
     url_for,
 )
 
@@ -13,11 +14,6 @@ from researchapp.extensions import sync
 
 BP = Blueprint('consent', __name__, template_folder='templates')
 PARTICIPANT = 1
-PROVIDER = {
-    'client-id': 'api-test',
-    'id': 1,
-    'name': 'smart',
-}
 
 
 @BP.route('/')
@@ -38,23 +34,39 @@ def share_my_data():
 def consent():
     ''' Show "consent" screen.
     '''
-    return render_template('consent.jinja2', provider=PROVIDER)
+    provider_id = request.args.get('doctor')
+    providers = [provider for provider in sync.list_providers()
+                 if str(provider['id']) == str(provider_id)]
+
+    try:
+        session['provider'] = providers[0]
+        return render_template('consent.jinja2', provider=providers[0])
+    except IndexError:
+        return render_template('invalid_provider.jinja2')
 
 
-@BP.route('/authorize')
+@BP.route('/authorize', methods=['POST'])
 def authorize():
     ''' Start the OAuth process.
     '''
-    return redirect(sync.get_provider_launch_url(PROVIDER['id']))
+    try:
+        provider = session['provider']
+        return redirect(sync.get_provider_launch_url(provider['id']))
+    except KeyError:
+        return render_template('invalid_provider.jinja2')
 
 
 @BP.route('/authorized')
 def authorized_callback():
     ''' Hand off the OAuth process.
     '''
-    sync.create_authorization(PROVIDER['id'], PARTICIPANT, request.url)
+    try:
+        provider = session.pop('provider')
+        sync.create_authorization(provider['id'], PARTICIPANT, request.url)
 
-    return redirect(url_for('.connected'))
+        return redirect(url_for('.connected'))
+    except KeyError as err:
+        return render_template('invalid_provider.jinja2')
 
 
 @BP.route('/connected')
