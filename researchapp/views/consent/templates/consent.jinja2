@@ -1,0 +1,21 @@
+{% extends "base.jinja2" %}
+
+{% block body %}
+<div class="row">
+    <div class="col-md-12">
+        <h1>Found {{ provider.name }}</h1>
+        <hr>
+
+        <form action="{{ url_for('.authorize') }}" method="post">
+            <input type="hidden" name="provider" value="{{ provider.id }}">
+
+            <button type="submit"
+                class="btn btn-primary btn-lg"
+                >Share my electronic health records &raquo;</button>
+        </form>
+
+        <h2>What does this mean?</h2>
+        <p>[consent language here]</p>
+    </div>
+</div>
+{% endblock %}

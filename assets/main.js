@@ -14,12 +14,12 @@ $(function () {
         data.name = query;
       }
 
-      $.get('/fhir/Practitioner', data)
+      $.get('/api/providers', data)
       .done(function (data) {
-        var results = _.map(data.entries, function (entry) {
+        var results = _.map(data, function (provider) {
           return {
-            value: entry.resource.name,
-            text: entry.resource.name
+            value: provider.id,
+            text: provider.name,
           };
         });
 
