@@ -6,7 +6,6 @@ from flask import (
     redirect,
     render_template,
     request,
-    session,
     url_for,
 )
 
@@ -39,7 +38,7 @@ def consent():
                  if str(provider['id']) == str(provider_id)]
 
     try:
-        session['provider'] = providers[0]
+        assert len(providers) <= 1, 'Too many matched providers.'
         return render_template('consent.jinja2', provider=providers[0])
     except IndexError:
         return render_template('invalid_provider.jinja2')
@@ -50,8 +49,8 @@ def authorize():
     ''' Start the OAuth process.
     '''
     try:
-        provider = session['provider']
-        return redirect(sync.get_provider_launch_url(provider['id']))
+        provider_id = request.form.get('provider')
+        return redirect(sync.get_provider_launch_url(provider_id, PARTICIPANT))
     except KeyError:
         return render_template('invalid_provider.jinja2')
 
@@ -61,9 +60,7 @@ def authorized_callback():
     ''' Hand off the OAuth process.
     '''
     try:
-        provider = session.pop('provider')
-        sync.create_authorization(provider['id'], PARTICIPANT, request.url)
-
+        sync.create_authorization(PARTICIPANT, request.url)
         return redirect(url_for('.connected'))
     except KeyError:
         return render_template('invalid_provider.jinja2')

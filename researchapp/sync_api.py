@@ -31,14 +31,17 @@ class SyncExtension(object):
         resp = self.session.post(self.host + '/participants')
         return resp.json()
 
-    def create_authorization(self, participant_id, provider_id, redirect_uri):
+    def create_authorization(self, participant_id, redirect_uri):
         ''' Store an authorization.
         '''
-        path = '/participants/{}/authorizations/{}'.format(participant_id, provider_id)
+        path = '/participants/{}/authorizations'.format(participant_id)
         params = {
             'redirect_uri': redirect_uri,
         }
         resp = self.session.post(self.host + path, data=params)
+
+        assert resp.status_code == 200, resp.json().get('message')
+
         return resp.json()
 
     def list_authorizations(self, participant_id):
@@ -55,8 +58,10 @@ class SyncExtension(object):
         resp = self.session.get(self.host + path)
         return resp.json()
 
-    def get_provider_launch_url(self, provider_id):
+    def get_provider_launch_url(self, provider_id, participant_id):
         ''' Get the url to start the OAuth handshake.
         '''
-        path = '/providers/{}/launch'.format(provider_id)
-        return self.host + path
+        path = '/providers/{}/launch/{}'.format(provider_id, participant_id)
+        resp = self.session.post(self.host + path, allow_redirects=False)
+
+        return resp.headers['Location']
