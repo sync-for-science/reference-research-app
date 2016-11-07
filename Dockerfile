@@ -17,5 +17,7 @@ ENV ES_URL "https://search-s4s-logs-xsjsafiwd7vkpiucmjqmdjkp7y.us-west-2.es.amaz
 ENV FLASK_APP "/usr/src/app/app.py"
 ENV FLASK_SECRET_KEY "SECRET"
 ENV SYNCHRONIZER_HOST "https://sync-api.demo.syncfor.science"
+ENV SYNCHRONIZER_USER "s4s-app"
+ENV SYNCHRONIZER_PASS "s4s-app-secret"
 
 CMD uwsgi uwsgi.ini

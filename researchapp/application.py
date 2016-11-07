@@ -8,6 +8,8 @@ from flask import Flask
 # Create and configured application
 app = Flask(__name__)
 app.config['SYNCHRONIZER_HOST'] = os.getenv('SYNCHRONIZER_HOST')
+app.config['SYNCHRONIZER_USER'] = os.getenv('SYNCHRONIZER_USER')
+app.config['SYNCHRONIZER_PASS'] = os.getenv('SYNCHRONIZER_PASS')
 app.secret_key = os.getenv('FLASK_SECRET_KEY')
 
 
