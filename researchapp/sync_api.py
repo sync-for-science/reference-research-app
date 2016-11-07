@@ -18,6 +18,7 @@ class SyncExtension(object):
         '''
         self.session = requests.Session()
         self.host = app.config['SYNCHRONIZER_HOST']
+        self.session.auth = app.config['SYNCHRONIZER_USER'], app.config['SYNCHRONIZER_PASS']
 
     def list_providers(self):
         ''' List available providers.
