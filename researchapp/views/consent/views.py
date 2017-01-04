@@ -62,6 +62,8 @@ def authorized_callback():
     try:
         sync.create_authorization(PARTICIPANT, request.url)
         return redirect(url_for('.connected'))
+    except (AssertionError, ValueError):
+        return render_template('oauth_error.jinja2')
     except KeyError:
         return render_template('invalid_provider.jinja2')
 
@@ -70,8 +72,11 @@ def authorized_callback():
 def connected():
     ''' Show all connected providers.
     '''
-    authorizations = sync.list_authorizations(PARTICIPANT)
-    return render_template('connected.jinja2', authorizations=authorizations)
+    try:
+        authorizations = sync.list_authorizations(PARTICIPANT)
+        return render_template('connected.jinja2', authorizations=authorizations)
+    except ValueError:
+        return render_template('invalid_provider.jinja2')
 
 
 @BP.route('/api/providers')
