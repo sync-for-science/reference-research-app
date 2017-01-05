@@ -74,6 +74,8 @@ def connected():
     '''
     try:
         authorizations = sync.list_authorizations(PARTICIPANT)
+        authorizations = [authz for authz in authorizations
+                          if authz['status'] == 'active']
         return render_template('connected.jinja2', authorizations=authorizations)
     except ValueError:
         return render_template('invalid_provider.jinja2')
