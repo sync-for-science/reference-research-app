@@ -55,7 +55,7 @@ def authorize():
         return render_template('invalid_provider.jinja2')
 
 
-@BP.route('/authorized', , methods=['GET', 'POST'])
+@BP.route('/authorized', methods=['GET', 'POST'])
 def authorized_callback():
     ''' Hand off the OAuth process.
     '''
