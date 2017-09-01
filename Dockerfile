@@ -13,7 +13,6 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY . /usr/src/app
 
 # Configure the app
-ENV ES_URL "https://search-s4s-logs-xsjsafiwd7vkpiucmjqmdjkp7y.us-west-2.es.amazonaws.com/reference-research-app/log/"
 ENV FLASK_APP "/usr/src/app/app.py"
 ENV FLASK_SECRET_KEY "SECRET"
 ENV SYNCHRONIZER_HOST "https://sync-api.demo.syncfor.science"
