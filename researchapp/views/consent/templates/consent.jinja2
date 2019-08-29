@@ -5,8 +5,9 @@
     <div class="col-md-12">
         <h1>Found {{ provider.name }}</h1>
         <hr>
-        {% if provider.username and provider.password %}
+        {% if provider.username and provider.demo_password %}
         <p>For demo login, please use the demo username: <tt>{{provider.username}}</tt> and demo password: <tt>{{provider.demo_password}}</tt></p>
+
         {% endif %}
         <form action="{{ url_for('.authorize') }}" method="post">
             <input type="hidden" name="provider" value="{{ provider.id }}">
